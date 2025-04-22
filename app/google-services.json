@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "85639996858",
+    "project_id": "crompass-a354e",
+    "storage_bucket": "crompass-a354e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85639996858:android:5699e5789f6e0b54b72983",
+        "android_client_info": {
+          "package_name": "com.example.crompass"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiLJDI9Nrvowiy-fJa-zNzbpgwlTfPcJI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
