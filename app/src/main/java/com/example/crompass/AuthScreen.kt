@@ -1,19 +1,28 @@
 package com.example.crompass
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
@@ -51,172 +60,180 @@ fun AuthScreen(
         "English", "German", "French", "Italian", "Spanish", "Dutch", "Croatian", "Polish", "Swedish", "Danish", "Norwegian", "Finnish", "Slovak", "Slovenian", "Hungarian", "Czech"
     )
 
-    Column(
+    val scrollState = rememberScrollState()
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(Color.Black)
     ) {
-        Text(
-            text = if (isLoginMode) "Login" else "Register",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = if (isLoginMode) "Login" else "Register",
+                style = MaterialTheme.typography.headlineMedium
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        if (!isLoginMode) {
+            if (!isLoginMode) {
+                OutlinedTextField(
+                    value = firstName,
+                    onValueChange = { firstName = it },
+                    label = { Text("First Name") },
+                    singleLine = true
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = lastName,
+                    onValueChange = { lastName = it },
+                    label = { Text("Last Name") },
+                    singleLine = true
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = age,
+                    onValueChange = { age = it },
+                    label = { Text("Age") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                SimpleDropdown(
+                    label = "Gender",
+                    options = genderOptions,
+                    selectedOption = gender,
+                    onOptionSelected = { gender = it }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                SimpleDropdown(
+                    label = "Native Country",
+                    options = countryOptions,
+                    selectedOption = country,
+                    onOptionSelected = { country = it }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                SimpleDropdown(
+                    label = "Native Language",
+                    options = languageOptions,
+                    selectedOption = language,
+                    onOptionSelected = { language = it }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
             OutlinedTextField(
-                value = firstName,
-                onValueChange = { firstName = it },
-                label = { Text("First Name") },
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
                 singleLine = true
             )
+
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = lastName,
-                onValueChange = { lastName = it },
-                label = { Text("Last Name") },
-                singleLine = true
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = age,
-                onValueChange = { age = it },
-                label = { Text("Age") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            SimpleDropdown(
-                label = "Gender",
-                options = genderOptions,
-                selectedOption = gender,
-                onOptionSelected = { gender = it }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            SimpleDropdown(
-                label = "Native Country",
-                options = countryOptions,
-                selectedOption = country,
-                onOptionSelected = { country = it }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            SimpleDropdown(
-                label = "Native Language",
-                options = languageOptions,
-                selectedOption = language,
-                onOptionSelected = { language = it }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        if (!isLoginMode) {
-            OutlinedTextField(
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
-                label = { Text("Confirm Password") },
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation()
             )
+
             Spacer(modifier = Modifier.height(8.dp))
-        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+            if (!isLoginMode) {
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = { Text("Confirm Password") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
-        Button(
-            onClick = {
-                isLoading = true
-                errorMessage = null
-                if (isLoginMode) {
-                    auth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            isLoading = false
-                            if (task.isSuccessful) {
-                                onAuthSuccess()
-                            } else {
-                                errorMessage = task.exception?.message
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = {
+                    isLoading = true
+                    errorMessage = null
+                    if (isLoginMode) {
+                        auth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                isLoading = false
+                                if (task.isSuccessful) {
+                                    onAuthSuccess()
+                                } else {
+                                    errorMessage = task.exception?.message
+                                }
                             }
+                    } else {
+                        if (password != confirmPassword) {
+                            errorMessage = "Passwords do not match"
+                            isLoading = false
+                            return@Button
                         }
-                } else {
-                    if (password != confirmPassword) {
-                        errorMessage = "Passwords do not match"
-                        isLoading = false
-                        return@Button
+
+                        auth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                isLoading = false
+                                if (task.isSuccessful) {
+                                    val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
+                                    val userMap = hashMapOf(
+                                        "firstName" to firstName,
+                                        "lastName" to lastName,
+                                        "age" to age,
+                                        "gender" to gender,
+                                        "country" to country,
+                                        "language" to language,
+                                        "email" to email
+                                    )
+
+                                    db.collection("users").document(userId).set(userMap)
+                                        .addOnSuccessListener {
+                                            onAuthSuccess()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            errorMessage = "Failed to save user data: ${e.message}"
+                                        }
+                                } else {
+                                    errorMessage = task.exception?.message
+                                }
+                            }
                     }
+                },
+                enabled = email.isNotBlank() && password.length >= 6
+            ) {
+                Text(if (isLoginMode) "Login" else "Register")
+            }
 
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            isLoading = false
-                            if (task.isSuccessful) {
-                                val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
-                                val userMap = hashMapOf(
-                                    "firstName" to firstName,
-                                    "lastName" to lastName,
-                                    "age" to age,
-                                    "gender" to gender,
-                                    "country" to country,
-                                    "language" to language,
-                                    "email" to email
-                                )
+            Spacer(modifier = Modifier.height(8.dp))
 
-                                db.collection("users").document(userId).set(userMap)
-                                    .addOnSuccessListener {
-                                        onAuthSuccess()
-                                    }
-                                    .addOnFailureListener { e ->
-                                        errorMessage = "Failed to save user data: ${e.message}"
-                                    }
-                            } else {
-                                errorMessage = task.exception?.message
-                            }
-                        }
-                }
-            },
-            enabled = email.isNotBlank() && password.length >= 6
-        ) {
-            Text(if (isLoginMode) "Login" else "Register")
-        }
+            TextButton(onClick = { isLoginMode = !isLoginMode }) {
+                Text(
+                    if (isLoginMode) "Don't have an account? Register"
+                    else "Already have an account? Login"
+                )
+            }
 
-        Spacer(modifier = Modifier.height(8.dp))
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
+            }
 
-        TextButton(onClick = { isLoginMode = !isLoginMode }) {
-            Text(
-                if (isLoginMode) "Don't have an account? Register"
-                else "Already have an account? Login"
-            )
-        }
-
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
-        }
-
-        errorMessage?.let {
-            Text(text = it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+            errorMessage?.let {
+                Text(text = it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+            }
         }
     }
 }
@@ -230,29 +247,57 @@ fun SimpleDropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxWidth()) {
-        OutlinedTextField(
-            value = selectedOption,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(label) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = true }
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = {
-                        onOptionSelected(option)
-                        expanded = false
-                    }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Column {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(start = 12.dp, top = 8.dp)
                 )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .clickable { expanded = true },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = selectedOption.ifBlank { "Select..." },
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(
+                            imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Dropdown"
+                        )
+                    }
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    options.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option) },
+                            onClick = {
+                                onOptionSelected(option)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
             }
         }
     }
