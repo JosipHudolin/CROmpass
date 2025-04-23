@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
@@ -31,79 +33,89 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun HomeScreen(onLogout: () -> Unit) {
+fun HomeScreen(navController: NavHostController) {
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route ?: ""
+
     Scaffold(
-        bottomBar = { CROmpassBottomBar() }
+        bottomBar = { CROmpassBottomBar(navController = navController, currentRoute = currentRoute) }
     ) { innerPadding ->
-        Box(
+        val scrollState = rememberScrollState()
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(scrollState)
                 .padding(innerPadding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceAround,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ✅ Top-right language switch and Logout
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .align(Alignment.TopEnd),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    "🇬🇧",
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.clickable { /* TODO: language switch */ }
-                )
-                Text(
-                    "Logout",
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
-                        Firebase.auth.signOut()
-                        onLogout()
-                    }
-                )
-            }
-
-            // ✅ Centered content
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxWidth()
             ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "🇬🇧",
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.clickable { /* TODO: language switch */ }
+                    )
+                    Text(
+                        "Logout",
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {
+                            Firebase.auth.signOut()
+                            navController.navigate("auth") {
+                                popUpTo("home") { inclusive = true }
+                            }
+                        }
+                    )
+                }
+
                 Text(
                     text = "Welcome to CROmpass!",
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
+            }
 
-                Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        HomeButton("Phrases", Icons.Default.MailOutline)
-                        HomeButton("Culture", Icons.Default.Person)
-                        HomeButton("Translate", Icons.Default.Face)
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        HomeButton("Map", Icons.Default.Place, MaterialTheme.colorScheme.tertiary)
-                        HomeButton("Emergency", Icons.Default.Warning, MaterialTheme.colorScheme.tertiary)
-                        HomeButton("Favorites", Icons.Default.Star, MaterialTheme.colorScheme.tertiary)
-                    }
+            Column(
+                modifier = Modifier.padding(20.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    HomeButton("Phrases", Icons.Default.MailOutline)
+                    HomeButton("Culture", Icons.Default.Person)
+                    HomeButton("Translate", Icons.Default.Face)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    HomeButton("Map", Icons.Default.Place, MaterialTheme.colorScheme.tertiary)
+                    HomeButton("Emergency", Icons.Default.Warning, MaterialTheme.colorScheme.tertiary)
+                    HomeButton("Favorites", Icons.Default.Star, MaterialTheme.colorScheme.tertiary)
                 }
             }
         }
@@ -126,35 +138,5 @@ fun HomeButton(label: String, icon: ImageVector, iconColor: Color = MaterialThem
             modifier = Modifier.size(48.dp)
         )
         Text(text = label)
-    }
-}
-
-@Composable
-fun CROmpassBottomBar() {
-    NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-        NavigationBarItem(
-            selected = true,
-            onClick = { /* TODO */ },
-            icon = {
-                Icon(Icons.Default.Home, contentDescription = "Home", tint = MaterialTheme.colorScheme.primary)
-            },
-            label = { Text("Home") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* TODO */ },
-            icon = {
-                Icon(Icons.Default.Search, contentDescription = "Explore", tint = MaterialTheme.colorScheme.primary)
-            },
-            label = { Text("Explore") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* TODO */ },
-            icon = {
-                Icon(Icons.Default.Settings, contentDescription = "Settings", tint = MaterialTheme.colorScheme.primary)
-            },
-            label = { Text("Settings") }
-        )
     }
 }

@@ -25,13 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ktx.firestore
 
 @Composable
 fun AuthScreen(
-    onAuthSuccess: () -> Unit
+    navController: NavHostController
 ) {
     val auth = Firebase.auth
     val db = Firebase.firestore
@@ -75,6 +76,13 @@ fun AuthScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
+                text = "CROmpass",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Text(
                 text = if (isLoginMode) "Login" else "Register",
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -86,7 +94,8 @@ fun AuthScreen(
                     value = firstName,
                     onValueChange = { firstName = it },
                     label = { Text("First Name") },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -94,7 +103,8 @@ fun AuthScreen(
                     value = lastName,
                     onValueChange = { lastName = it },
                     label = { Text("Last Name") },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -103,7 +113,10 @@ fun AuthScreen(
                     onValueChange = { age = it },
                     label = { Text("Age") },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -136,7 +149,8 @@ fun AuthScreen(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text("Email") },
-                singleLine = true
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -146,7 +160,8 @@ fun AuthScreen(
                 onValueChange = { password = it },
                 label = { Text("Password") },
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = if (isLoginMode) ImeAction.Done else ImeAction.Next)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -157,7 +172,8 @@ fun AuthScreen(
                     onValueChange = { confirmPassword = it },
                     label = { Text("Confirm Password") },
                     singleLine = true,
-                    visualTransformation = PasswordVisualTransformation()
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -173,12 +189,28 @@ fun AuthScreen(
                             .addOnCompleteListener { task ->
                                 isLoading = false
                                 if (task.isSuccessful) {
-                                    onAuthSuccess()
+                                    navController.navigate("home") {
+                                        popUpTo("auth") { inclusive = true }
+                                    }
                                 } else {
                                     errorMessage = task.exception?.message
                                 }
                             }
                     } else {
+                        if (firstName.isBlank() || lastName.isBlank() || age.isBlank() ||
+                            gender.isBlank() || country.isBlank() || language.isBlank()
+                        ) {
+                            errorMessage = "Please fill in all fields."
+                            isLoading = false
+                            return@Button
+                        }
+
+                        if (age.toIntOrNull() == null) {
+                            errorMessage = "Age must be a number."
+                            isLoading = false
+                            return@Button
+                        }
+
                         if (password != confirmPassword) {
                             errorMessage = "Passwords do not match"
                             isLoading = false
@@ -202,7 +234,9 @@ fun AuthScreen(
 
                                     db.collection("users").document(userId).set(userMap)
                                         .addOnSuccessListener {
-                                            onAuthSuccess()
+                                            navController.navigate("home") {
+                                                popUpTo("auth") { inclusive = true }
+                                            }
                                         }
                                         .addOnFailureListener { e ->
                                             errorMessage = "Failed to save user data: ${e.message}"
