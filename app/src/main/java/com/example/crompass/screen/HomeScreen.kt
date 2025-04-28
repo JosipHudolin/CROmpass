@@ -1,11 +1,9 @@
-package com.example.crompass
+package com.example.crompass.screen
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,25 +16,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,7 +41,12 @@ fun HomeScreen(navController: NavHostController) {
     val currentRoute = currentBackStackEntry?.destination?.route ?: ""
 
     Scaffold(
-        bottomBar = { CROmpassBottomBar(navController = navController, currentRoute = currentRoute) }
+        bottomBar = {
+            CROmpassBottomBar(
+                navController = navController,
+                currentRoute = currentRoute
+            )
+        }
     ) { innerPadding ->
         val scrollState = rememberScrollState()
         Column(
@@ -104,18 +99,18 @@ fun HomeScreen(navController: NavHostController) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    HomeButton("Phrases", Icons.Default.MailOutline)
-                    HomeButton("Culture", Icons.Default.Person)
-                    HomeButton("Translate", Icons.Default.Face)
+                    HomeButton("Phrases", Icons.Default.MailOutline, navController = navController)
+                    HomeButton("Culture", Icons.Default.Person, navController = navController)
+                    HomeButton("Translate", Icons.Default.Face, navController = navController)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    HomeButton("Map", Icons.Default.Place, MaterialTheme.colorScheme.tertiary)
-                    HomeButton("Emergency", Icons.Default.Warning, MaterialTheme.colorScheme.tertiary)
-                    HomeButton("Favorites", Icons.Default.Star, MaterialTheme.colorScheme.tertiary)
+                    HomeButton("Map", Icons.Default.Place, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
+                    HomeButton("Emergency", Icons.Default.Warning, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
+                    HomeButton("Favorites", Icons.Default.Star, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
                 }
             }
         }
@@ -124,11 +119,25 @@ fun HomeScreen(navController: NavHostController) {
 
 
 @Composable
-fun HomeButton(label: String, icon: ImageVector, iconColor: Color = MaterialTheme.colorScheme.primary) {
+fun HomeButton(
+    label: String,
+    icon: ImageVector,
+    navController: NavHostController,
+    iconColor: Color = MaterialTheme.colorScheme.primary
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .clickable { /* TODO */ }
+            .clickable {
+                when (label) {
+                    "Phrases" -> navController.navigate("phrases")
+                    "Culture" -> { /* TODO */ }
+                    "Translate" -> { /* TODO */ }
+                    "Map" -> { /* TODO */ }
+                    "Emergency" -> { /* TODO */ }
+                    "Favorites" -> { /* TODO */ }
+                }
+            }
             .padding(8.dp)
     ) {
         Icon(

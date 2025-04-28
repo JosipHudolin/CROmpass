@@ -1,6 +1,5 @@
-package com.example.crompass
+package com.example.crompass.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
@@ -13,11 +12,17 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.navigation.NavHostController
+import com.example.crompass.utils.logout
+import com.google.firebase.auth.EmailAuthProvider
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(onLogout: () -> Unit) {
+fun ProfileScreen(navController: NavHostController) {
     val db = Firebase.firestore
     val userId = Firebase.auth.currentUser?.uid
 
@@ -52,7 +57,20 @@ fun ProfileScreen(onLogout: () -> Unit) {
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        topBar = {
+            TopAppBar(
+                title = { Text("My profile") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = {
+            CROmpassBottomBar(navController = navController, currentRoute = "profile")
+        }
     ) { padding ->
         Box(
             modifier = Modifier
@@ -119,8 +137,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
                         Button(
                             onClick = {
-                                Firebase.auth.signOut()
-                                onLogout()
+                                logout(navController)
                             },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
@@ -201,9 +218,47 @@ fun EditProfileDialog(
                 OutlinedTextField(value = firstName, onValueChange = { firstName = it }, label = { Text("First Name") })
                 OutlinedTextField(value = lastName, onValueChange = { lastName = it }, label = { Text("Last Name") })
                 OutlinedTextField(value = age, onValueChange = { age = it }, label = { Text("Age") })
-                OutlinedTextField(value = gender, onValueChange = { gender = it }, label = { Text("Gender") })
-                OutlinedTextField(value = country, onValueChange = { country = it }, label = { Text("Country") })
-                OutlinedTextField(value = language, onValueChange = { language = it }, label = { Text("Language") })
+
+                SimpleDropdown(
+                    label = "Gender",
+                    options = listOf("Male", "Female", "Other"),
+                    selectedOption = gender,
+                    onOptionSelected = { gender = it }
+                )
+
+                SimpleDropdown(
+                    label = "Country",
+                    options = listOf(
+                        "Croatia",
+                        "Germany",
+                        "France",
+                        "Italy",
+                        "Spain",
+                        "United Kingdom",
+                        "Poland",
+                        "Netherlands",
+                        "Belgium",
+                        "Switzerland"
+                    ),
+                    selectedOption = country,
+                    onOptionSelected = { country = it }
+                )
+
+                SimpleDropdown(
+                    label = "Language",
+                    options = listOf(
+                        "Croatian",
+                        "English",
+                        "German",
+                        "French",
+                        "Italian",
+                        "Spanish",
+                        "Polish",
+                        "Dutch"
+                    ),
+                    selectedOption = language,
+                    onOptionSelected = { language = it }
+                )
             }
         }
     )
@@ -232,7 +287,7 @@ fun ChangePasswordDialog(
                 }
 
                 if (email != null && user != null) {
-                    val credential = com.google.firebase.auth.EmailAuthProvider.getCredential(email, currentPassword)
+                    val credential = EmailAuthProvider.getCredential(email, currentPassword)
                     user.reauthenticate(credential)
                         .addOnSuccessListener {
                             user.updatePassword(newPassword)

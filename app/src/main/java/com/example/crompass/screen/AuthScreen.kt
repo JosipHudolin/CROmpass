@@ -1,4 +1,4 @@
-package com.example.crompass
+package com.example.crompass.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,16 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.firestore.ktx.firestore
+import com.example.crompass.utils.loginUser
+import com.example.crompass.utils.registerUser
 
 @Composable
 fun AuthScreen(
     navController: NavHostController
 ) {
-    val auth = Firebase.auth
-    val db = Firebase.firestore
 
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -185,17 +182,16 @@ fun AuthScreen(
                     isLoading = true
                     errorMessage = null
                     if (isLoginMode) {
-                        auth.signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener { task ->
-                                isLoading = false
-                                if (task.isSuccessful) {
-                                    navController.navigate("home") {
-                                        popUpTo("auth") { inclusive = true }
-                                    }
-                                } else {
-                                    errorMessage = task.exception?.message
+                        loginUser(email, password) { success, message ->
+                            isLoading = false
+                            if (success) {
+                                navController.navigate("home") {
+                                    popUpTo("auth") { inclusive = true }
                                 }
+                            } else {
+                                errorMessage = message
                             }
+                        }
                     } else {
                         if (firstName.isBlank() || lastName.isBlank() || age.isBlank() ||
                             gender.isBlank() || country.isBlank() || language.isBlank()
@@ -217,34 +213,46 @@ fun AuthScreen(
                             return@Button
                         }
 
-                        auth.createUserWithEmailAndPassword(email, password)
-                            .addOnCompleteListener { task ->
-                                isLoading = false
-                                if (task.isSuccessful) {
-                                    val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
-                                    val userMap = hashMapOf(
-                                        "firstName" to firstName,
-                                        "lastName" to lastName,
-                                        "age" to age,
-                                        "gender" to gender,
-                                        "country" to country,
-                                        "language" to language,
-                                        "email" to email
-                                    )
+                        val languageCodes = mapOf(
+                            "English" to "en",
+                            "German" to "de",
+                            "French" to "fr",
+                            "Italian" to "it",
+                            "Spanish" to "es",
+                            "Dutch" to "nl",
+                            "Croatian" to "hr",
+                            "Polish" to "pl",
+                            "Swedish" to "sv",
+                            "Danish" to "da",
+                            "Norwegian" to "no",
+                            "Finnish" to "fi",
+                            "Slovak" to "sk",
+                            "Slovenian" to "sl",
+                            "Hungarian" to "hu",
+                            "Czech" to "cs"
+                        )
 
-                                    db.collection("users").document(userId).set(userMap)
-                                        .addOnSuccessListener {
-                                            navController.navigate("home") {
-                                                popUpTo("auth") { inclusive = true }
-                                            }
-                                        }
-                                        .addOnFailureListener { e ->
-                                            errorMessage = "Failed to save user data: ${e.message}"
-                                        }
-                                } else {
-                                    errorMessage = task.exception?.message
+                        val languageCode = languageCodes[language] ?: "en"
+
+                        val userData = mapOf(
+                            "firstName" to firstName,
+                            "lastName" to lastName,
+                            "age" to age,
+                            "gender" to gender,
+                            "country" to country,
+                            "language" to languageCode,
+                            "email" to email
+                        )
+                        registerUser(email, password, userData) { success, message ->
+                            isLoading = false
+                            if (success) {
+                                navController.navigate("home") {
+                                    popUpTo("auth") { inclusive = true }
                                 }
+                            } else {
+                                errorMessage = message
                             }
+                        }
                     }
                 },
                 enabled = email.isNotBlank() && password.length >= 6

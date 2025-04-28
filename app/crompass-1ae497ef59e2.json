@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "crompass",
+  "private_key_id": "1ae497ef59e23b145fb360b2b094d199a47e711c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC3Dza0u31H5xOs\nENhxx72XISvhs1zh0ddrshLT1Zoxq6Um4KYI1InBNnz/6fmt6tTNHPh881JM7jNA\nQ7XNy2RbJIytvX+EbLkRUwQwEE6glKOZIPuBUf30nOIoqNn0VwW7fxce1z2qNImu\n+fKnmpysyXZA6/MKM0hocryBFCBBZt9JnZstc2vTX/WT8cBFLPivWuUc2a6oHI3+\neBhaAE+rw49MBwoANMKHlJkkbislqmhbqiPSs2iAomltdtm5SJU25+GAAl1U0FnC\nb/JSNBPeQGhIH/OyLr5KxCwBJ2CPqqnHrtgXSWD7PDNSkCZzL5iCIkfYZ84Ojd2q\nYJerqcAVAgMBAAECggEABS9Hn9/Ni7tLjyyHoiquP85fNUxvXYVOzMyQLvLA+WuA\nnnTEucGh8y3NZYbQHQZmfOFiAlFL6++KgQ/0jBMY0Qyxyqaa1Xp/gAecuesZpv+p\nZd1ix4YLI3dMCoBvHTYCbLiL7uzZYMLjLBMFNeJcUffUwxWhCRFsbr+NKjoSiHef\n175H9CEkD6wwAQGrtxVZ9QqI82h21lfC/y0HTL8ZxZtrN5Mer2C39J342yjdM3zE\nuEGifzUBsPWVOvlenX+AqoGxw2rqvF8s8qZNIu2OZu92dZgQTRVfGTFt6IaxwkKh\nAFRBWapDgQGMoGDXLhdd9ZV0JPtNZ8qlQMm5c51LcwKBgQD9QLjETxFtOM9fqgYZ\nHKuEV8qzXyRFolxtr/S0V4s7qqE0a3xQRPjzpGdmayLhJi4Vl27ZSb8bhE6qyHdV\nQposlqLs54eifePnfelO9soGcc1FpJj/3I7jqFwUQ61v4n3XlC8ldE7G4W3okxsT\nm+grRC68zkTSr6PJSQ8U8sPcSwKBgQC5C5D1J3d15/jIIqZjIRhJMDYoUxAyImyG\nDaRbSGVUc+b1k6bZG7Kxq9uxIY2fx+ibWrKruHGdJOIkfVUs8xFR2GAiWJ8G+g8i\ngX9hg+msceqKmT/BRFlr5lnH+7uBD4DqV7xtHRcU8vlxNtSY4l/+BHOF7Ctu+sdF\noFPMmZRZHwKBgQDh7LgoIKVaO6D8JbC0/Feig7NH22t/V31/OMZjj+mc+/Y9zlmj\nPjSdHiBERPVjx+y6xFJWM6zyPlDzmEyk2fqyJlwIXfApLIeA/1mAYTcPErzeER2Q\nu9EZFRu31DxIINTE2eRJVH3mfDrRjVJNZvtyhavwMU9CaQADVFLJDF1gCwKBgFol\nh1XXBzx6aNle//305nbpNMkKRi6WVJYt2S7bIvo0iISEjNjhxHkHxzwQo4T+h5P/\naGF9tmOez0iFglQmif58UcEJuVdVxL/DpIGmGNV4nZEtvUBzArks+/oP6bWjDuOb\nIGFrtY3wHJMJ6iIczjTaiEjq1/H129RQmeJnwzxzAoGBAOpr2kzwK9YAR/nV2AtF\ntePDZj6Du8KuaL0ke8KLWBE7JKRuDXZ7C4CFH+M/xBd/cJK1BcTeoFpCKQuxR6bU\nKfLhGrNfeDl/3A4/YEmqNoYNRftmXiLdVTR7FShwrJv2Hz6YWMo03jiBNP92nU3i\nTaOA6HryrKz0euDsc0/hpZ9J\n-----END PRIVATE KEY-----\n",
+  "client_email": "tts-service-account@crompass.iam.gserviceaccount.com",
+  "client_id": "104869393271097312883",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tts-service-account%40crompass.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

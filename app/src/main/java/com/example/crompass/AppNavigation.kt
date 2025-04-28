@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.crompass.screen.AuthScreen
+import com.example.crompass.screen.HomeScreen
+import com.example.crompass.screen.PhrasesScreen
+import com.example.crompass.screen.ProfileScreen
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -25,13 +29,11 @@ fun AppNavigation() {
         }
 
         composable("profile") {
-            ProfileScreen(
-                onLogout = {
-                    navController.navigate("auth") {
-                        popUpTo("profile") { inclusive = true }
-                    }
-                }
-            )
+            ProfileScreen(navController = navController)
+        }
+
+        composable("phrases") {
+            PhrasesScreen(navController = navController)
         }
     }
 }
