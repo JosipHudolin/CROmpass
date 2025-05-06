@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.crompass.screen.AuthScreen
+import com.example.crompass.screen.CultureScreen
 import com.example.crompass.screen.HomeScreen
 import com.example.crompass.screen.PhrasesScreen
 import com.example.crompass.screen.ProfileScreen
@@ -34,6 +35,10 @@ fun AppNavigation() {
 
         composable("phrases") {
             PhrasesScreen(navController = navController)
+        }
+
+        composable("culture") {
+            CultureScreen(navController = navController)
         }
     }
 }

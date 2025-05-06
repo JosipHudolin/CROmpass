@@ -12,38 +12,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.crompass.model.Phrase
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.tasks.await
+import com.example.crompass.viewmodel.PhraseViewModel
 import android.speech.tts.TextToSpeech
+import androidx.compose.runtime.livedata.observeAsState
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhrasesScreen(navController: NavHostController) {
-    var phrases by remember { mutableStateOf<List<Phrase>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-    var userLanguage by remember { mutableStateOf("en") }
+    val phrasesViewModel: PhraseViewModel = viewModel()
 
+    // Observe LiveData from the ViewModel
+    val phrases by phrasesViewModel.phrases.observeAsState(emptyList())
+    val isLoading by phrasesViewModel.isLoading.observeAsState(false)
+    val errorMessage by phrasesViewModel.errorMessage.observeAsState("")
+    val userLanguage by phrasesViewModel.userLanguage.observeAsState("en") // Observe user language
+
+    // Initialize Text-to-Speech
     val context = LocalContext.current
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
 
     LaunchedEffect(Unit) {
         tts = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
-                // Provjeri dostupnost hrvatskog jezika
                 val languageAvailable = tts?.isLanguageAvailable(Locale("hr")) == TextToSpeech.LANG_AVAILABLE
-                if (languageAvailable) {
-                    tts?.language = Locale("hr") // Ako je hrvatski jezik dostupan
-                } else {
-                    tts?.language = Locale("en") // Ako nije, koristi engleski
-                }
-            } else {
-                errorMessage = "Failed to initialize Text-to-Speech"
+                tts?.language = if (languageAvailable) Locale("hr") else Locale("en")
             }
         }
     }
@@ -52,28 +47,9 @@ fun PhrasesScreen(navController: NavHostController) {
         tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
+    // Load phrases data on screen load
     LaunchedEffect(Unit) {
-        val auth = Firebase.auth
-        val db = Firebase.firestore
-
-        val userId = auth.currentUser?.uid
-        if (userId != null) {
-            try {
-                val document = db.collection("users").document(userId).get().await()
-                userLanguage = document.getString("language") ?: "en"
-
-                val result = db.collection("phrases").get().await()
-                val fetchedPhrases = result.map { it.toObject(Phrase::class.java) }
-                phrases = fetchedPhrases
-            } catch (e: Exception) {
-                errorMessage = e.message
-            } finally {
-                isLoading = false
-            }
-        } else {
-            errorMessage = "User not logged in"
-            isLoading = false
-        }
+        phrasesViewModel.fetchPhrases()
     }
 
     Scaffold(
@@ -114,18 +90,23 @@ fun PhrasesScreen(navController: NavHostController) {
                                 .fillMaxWidth()
                                 .clickable {
                                     val phraseText = phrase.phrases["hr"] ?: "Nepoznato"
-                                    speak(phraseText)  // Izgovara na hrvatskom
+                                    speak(phraseText)  // Speak in Croatian
                                 },
                             shape = MaterialTheme.shapes.medium
                         ) {
                             Column(Modifier.padding(16.dp)) {
+                                // Render the phrase in the selected language (German, Croatian, etc.)
                                 Text(
-                                    text = phrase.phrases[userLanguage]
-                                        ?: phrase.phrases["en"]
-                                        ?: "Unknown",
+                                    text = when (userLanguage) {
+                                        "de" -> phrase.phrases["de"] ?: phrase.phrases["hr"] ?: "Unknown"
+                                        "hr" -> phrase.phrases["hr"] ?: phrase.phrases["de"] ?: "Unknown"
+                                        else -> phrase.phrases["en"] ?: "Unknown"
+                                    },
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Spacer(Modifier.height(4.dp))
+
+                                // Always show Croatian translation
                                 Text(
                                     text = "➡️ ${phrase.phrases["hr"] ?: "Nepoznato"}",
                                     style = MaterialTheme.typography.bodyMedium

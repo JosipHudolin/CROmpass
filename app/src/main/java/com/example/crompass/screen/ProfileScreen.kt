@@ -1,5 +1,6 @@
 package com.example.crompass.screen
 
+import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
@@ -7,67 +8,62 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.crompass.model.UserData
 import com.example.crompass.utils.logout
-import com.google.firebase.auth.EmailAuthProvider
-import kotlinx.coroutines.launch
+import com.example.crompass.viewmodel.ProfileViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavHostController) {
-    val db = Firebase.firestore
-    val userId = Firebase.auth.currentUser?.uid
+fun ProfileScreen(navController: NavHostController, viewModel: ProfileViewModel = viewModel()) {
+    val userData by viewModel.userData.observeAsState()
+    val errorMessage by viewModel.errorMessage.observeAsState()
+    var isEditDialogOpen by remember { mutableStateOf(false) }
+    var isChangePasswordDialogOpen by remember { mutableStateOf(false) }
 
-    val coroutineScope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    var userData by remember { mutableStateOf<Map<String, Any>?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
-    var showEditDialog by remember { mutableStateOf(false) }
-    var showPasswordDialog by remember { mutableStateOf(false) }
-
-    LaunchedEffect(userId) {
-        if (userId != null) {
-            db.collection("users").document(userId).get()
-                .addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        userData = document.data
-                    } else {
-                        error = "No user data found."
-                    }
-                    isLoading = false
-                }
-                .addOnFailureListener {
-                    error = "Error fetching profile: ${it.message}"
-                    isLoading = false
-                }
-        } else {
-            error = "User not logged in."
-            isLoading = false
-        }
+    LaunchedEffect(true) {
+        viewModel.fetchUserData()
     }
+
+    // Reverse mapping: language code to language name
+    val languageCodeToName = mapOf(
+        "en" to "English",
+        "de" to "German",
+        "fr" to "French",
+        "it" to "Italian",
+        "es" to "Spanish",
+        "nl" to "Dutch",
+        "hr" to "Croatian",
+        "pl" to "Polish",
+        "sv" to "Swedish",
+        "da" to "Danish",
+        "no" to "Norwegian",
+        "fi" to "Finnish",
+        "sk" to "Slovak",
+        "sl" to "Slovenian",
+        "hu" to "Hungarian",
+        "cs" to "Czech"
+    )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My profile") },
+                title = { Text("My Profile") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             CROmpassBottomBar(navController = navController, currentRoute = "profile")
         }
@@ -79,13 +75,14 @@ fun ProfileScreen(navController: NavHostController) {
                 .padding(24.dp)
         ) {
             when {
-                isLoading -> {
-                    CircularProgressIndicator()
+                userData == null -> {
+                    if (errorMessage != null) {
+                        Text(text = errorMessage ?: "Unknown error", color = MaterialTheme.colorScheme.error)
+                    } else {
+                        CircularProgressIndicator()
+                    }
                 }
-                error != null -> {
-                    Text(text = error ?: "Unknown error", color = MaterialTheme.colorScheme.error)
-                }
-                userData != null -> {
+                else -> {
                     val scrollState = rememberScrollState()
 
                     Column(
@@ -96,12 +93,12 @@ fun ProfileScreen(navController: NavHostController) {
                         horizontalAlignment = Alignment.Start
                     ) {
                         listOf(
-                            "👤 Name" to "${userData?.get("firstName")} ${userData?.get("lastName")}",
-                            "📧 Email" to "${userData?.get("email")}",
-                            "🎂 Age" to "${userData?.get("age")}",
-                            "⚧ Gender" to "${userData?.get("gender")}",
-                            "🌍 Country" to "${userData?.get("country")}",
-                            "🗣️ Language" to "${userData?.get("language")}"
+                            "👤 Name" to "${userData?.firstName} ${userData?.lastName}",
+                            "📧 Email" to "${userData?.email}",
+                            "🎂 Age" to "${userData?.age}",
+                            "⚧ Gender" to "${userData?.gender}",
+                            "🌍 Country" to "${userData?.country}",
+                            "🗣️ Language" to (languageCodeToName[userData?.language] ?: "Unknown") // Map code to name here
                         ).forEach { (label, value) ->
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
@@ -117,28 +114,45 @@ fun ProfileScreen(navController: NavHostController) {
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
+
                         Button(
-                            onClick = {
-                                showEditDialog = true
-                            },
+                            onClick = { isEditDialogOpen = true },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
                             Text("Edit Info")
                         }
 
+                        if (isEditDialogOpen) {
+                            EditProfileDialog(
+                                userData = userData!!,
+                                onDismiss = { isEditDialogOpen = false },
+                                onSave = { updatedData ->
+                                    viewModel.updateUserData(updatedData) // Call ViewModel method to update Firestore
+                                    isEditDialogOpen = false
+                                }
+                            )
+                        }
+
                         Button(
-                            onClick = {
-                                showPasswordDialog = true
-                            },
+                            onClick = { isChangePasswordDialogOpen = true },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
                             Text("Change Password")
                         }
 
+                        if (isChangePasswordDialogOpen) {
+                            ChangePasswordDialog(
+                                onDismiss = { isChangePasswordDialogOpen = false },
+                                onPasswordChanged = { message ->
+                                    // Handle password changed message
+                                    // Show a Toast or update UI accordingly
+                                    println(message)
+                                }
+                            )
+                        }
+
                         Button(
-                            onClick = {
-                                logout(navController)
-                            },
+                            onClick = { logout(navController) },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
                             Text("Logout")
@@ -148,61 +162,128 @@ fun ProfileScreen(navController: NavHostController) {
             }
         }
     }
-    if (showEditDialog && userData != null) {
-        EditProfileDialog(
-            currentData = userData!!,
-            onDismiss = { showEditDialog = false },
-            onSave = { updatedData ->
-                val userId = Firebase.auth.currentUser?.uid ?: return@EditProfileDialog
-                db.collection("users").document(userId).set(updatedData)
-                    .addOnSuccessListener {
-                        userData = updatedData
-                        showEditDialog = false
-                    }
-            }
-        )
-    }
-    if (showPasswordDialog) {
-        ChangePasswordDialog(
-            onDismiss = { showPasswordDialog = false },
-            onPasswordChanged = { message ->
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(message)
-                }
-                showPasswordDialog = false
-            }
-        )
-    }
 }
 
 @Composable
 fun EditProfileDialog(
-    currentData: Map<String, Any>,
+    userData: UserData,
     onDismiss: () -> Unit,
     onSave: (Map<String, Any>) -> Unit
 ) {
-    var firstName by remember { mutableStateOf(currentData["firstName"] as? String ?: "") }
-    var lastName by remember { mutableStateOf(currentData["lastName"] as? String ?: "") }
-    var age by remember { mutableStateOf(currentData["age"] as? String ?: "") }
-    var gender by remember { mutableStateOf(currentData["gender"] as? String ?: "") }
-    var country by remember { mutableStateOf(currentData["country"] as? String ?: "") }
-    var language by remember { mutableStateOf(currentData["language"] as? String ?: "") }
+    var firstName by remember { mutableStateOf(userData.firstName) }
+    var lastName by remember { mutableStateOf(userData.lastName) }
+    var email by remember { mutableStateOf(userData.email) }
+    var age by remember { mutableStateOf(userData.age) }
+    var gender by remember { mutableStateOf(userData.gender) }
+    var country by remember { mutableStateOf(userData.country) }
+    var language by remember { mutableStateOf(userData.language) }
+
+    // Dropdown options
+    val genderOptions = listOf("Male", "Female", "Other")
+    val countryOptions = listOf(
+        "Austria", "Belgium", "Croatia", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Netherlands", "Norway", "Poland", "Portugal", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland"
+    )
+
+    val languageOptions = listOf(
+        "English", "German", "French", "Italian", "Spanish", "Dutch", "Croatian", "Polish", "Swedish", "Danish", "Norwegian", "Finnish", "Slovak", "Slovenian", "Hungarian", "Czech"
+    )
+
+    // Language codes map
+    val languageCodes = mapOf(
+        "English" to "en",
+        "German" to "de",
+        "French" to "fr",
+        "Italian" to "it",
+        "Spanish" to "es",
+        "Dutch" to "nl",
+        "Croatian" to "hr",
+        "Polish" to "pl",
+        "Swedish" to "sv",
+        "Danish" to "da",
+        "Norwegian" to "no",
+        "Finnish" to "fi",
+        "Slovak" to "sk",
+        "Slovenian" to "sl",
+        "Hungarian" to "hu",
+        "Czech" to "cs"
+    )
+
+    val languageCodeToName = mapOf(
+        "en" to "English",
+        "de" to "German",
+        "fr" to "French",
+        "it" to "Italian",
+        "es" to "Spanish",
+        "nl" to "Dutch",
+        "hr" to "Croatian",
+        "pl" to "Polish",
+        "sv" to "Swedish",
+        "da" to "Danish",
+        "no" to "Norwegian",
+        "fi" to "Finnish",
+        "sk" to "Slovak",
+        "sl" to "Slovenian",
+        "hu" to "Hungarian",
+        "cs" to "Czech"
+    )
+
+    // Get the language code for the selected language
+    val selectedLanguageCode = languageCodes[language] ?: "en" // Default to "en" if no match
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        title = { Text("Edit Profile") },
+        text = {
+            Column {
+                TextField(value = firstName, onValueChange = { firstName = it }, label = { Text("First Name") })
+                TextField(value = lastName, onValueChange = { lastName = it }, label = { Text("Last Name") })
+                TextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
+                TextField(value = age, onValueChange = { age = it }, label = { Text("Age") })
+
+                // Gender Dropdown
+                SimpleDropdown(
+                    label = "Gender",
+                    options = genderOptions,
+                    selectedOption = gender,
+                    onOptionSelected = { gender = it }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Country Dropdown
+                SimpleDropdown(
+                    label = "Country",
+                    options = countryOptions,
+                    selectedOption = country,
+                    onOptionSelected = { country = it }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Language Dropdown (show names but save the language code)
+                SimpleDropdown(
+                    label = "Language",
+                    options = languageOptions,
+                    selectedOption = languageCodeToName[selectedLanguageCode] ?: "English",
+                    onOptionSelected = { selectedLanguage ->
+                        language = selectedLanguage
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        },
         confirmButton = {
             TextButton(onClick = {
                 onSave(
                     mapOf(
                         "firstName" to firstName,
                         "lastName" to lastName,
+                        "email" to email,
                         "age" to age,
                         "gender" to gender,
                         "country" to country,
-                        "language" to language,
-                        "email" to currentData["email"].toString()
+                        "language" to selectedLanguageCode // Save the language code here
                     )
                 )
+                onDismiss()
             }) {
                 Text("Save")
             }
@@ -210,55 +291,6 @@ fun EditProfileDialog(
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text("Cancel")
-            }
-        },
-        title = { Text("Edit Profile") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = firstName, onValueChange = { firstName = it }, label = { Text("First Name") })
-                OutlinedTextField(value = lastName, onValueChange = { lastName = it }, label = { Text("Last Name") })
-                OutlinedTextField(value = age, onValueChange = { age = it }, label = { Text("Age") })
-
-                SimpleDropdown(
-                    label = "Gender",
-                    options = listOf("Male", "Female", "Other"),
-                    selectedOption = gender,
-                    onOptionSelected = { gender = it }
-                )
-
-                SimpleDropdown(
-                    label = "Country",
-                    options = listOf(
-                        "Croatia",
-                        "Germany",
-                        "France",
-                        "Italy",
-                        "Spain",
-                        "United Kingdom",
-                        "Poland",
-                        "Netherlands",
-                        "Belgium",
-                        "Switzerland"
-                    ),
-                    selectedOption = country,
-                    onOptionSelected = { country = it }
-                )
-
-                SimpleDropdown(
-                    label = "Language",
-                    options = listOf(
-                        "Croatian",
-                        "English",
-                        "German",
-                        "French",
-                        "Italian",
-                        "Spanish",
-                        "Polish",
-                        "Dutch"
-                    ),
-                    selectedOption = language,
-                    onOptionSelected = { language = it }
-                )
             }
         }
     )
@@ -272,38 +304,44 @@ fun ChangePasswordDialog(
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Get the current context using LocalContext
+    val context = LocalContext.current
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        title = { Text("Change Password") },
+        text = {
+            Column {
+                TextField(value = currentPassword, onValueChange = { currentPassword = it }, label = { Text("Current Password") })
+                TextField(value = newPassword, onValueChange = { newPassword = it }, label = { Text("New Password") })
+                TextField(value = confirmPassword, onValueChange = { confirmPassword = it }, label = { Text("Confirm Password") })
+            }
+        },
         confirmButton = {
             TextButton(onClick = {
-                val user = Firebase.auth.currentUser
-                val email = user?.email
-
-                if (newPassword != confirmPassword) {
-                    errorMessage = "Passwords do not match."
-                    return@TextButton
-                }
-
-                if (email != null && user != null) {
-                    val credential = EmailAuthProvider.getCredential(email, currentPassword)
-                    user.reauthenticate(credential)
-                        .addOnSuccessListener {
+                FirebaseAuth.getInstance().currentUser?.let { user ->
+                    if (newPassword == confirmPassword) {
+                        if (newPassword.length >= 6) { // Password length validation
                             user.updatePassword(newPassword)
                                 .addOnSuccessListener {
+                                    // Show Toast that password was successfully changed
+                                    Toast.makeText(context, "Password changed successfully.", Toast.LENGTH_SHORT).show()
                                     onPasswordChanged("Password changed successfully.")
                                 }
-                                .addOnFailureListener {
-                                    onPasswordChanged("Failed to change password: ${it.message}")
+                                .addOnFailureListener { e ->
+                                    onPasswordChanged("Error changing password: ${e.localizedMessage}")
                                 }
+                        } else {
+                            onPasswordChanged("Password must be at least 6 characters.")
                         }
-                        .addOnFailureListener {
-                            onPasswordChanged("Authentication failed: ${it.message}")
-                        }
-                } else {
-                    onPasswordChanged("No authenticated user.")
+                    } else {
+                        onPasswordChanged("Passwords do not match.")
+                    }
+                } ?: run {
+                    onPasswordChanged("User is not logged in.")
                 }
+                onDismiss()
             }) {
                 Text("Save")
             }
@@ -311,32 +349,6 @@ fun ChangePasswordDialog(
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text("Cancel")
-            }
-        },
-        title = { Text("Change Password") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = currentPassword,
-                    onValueChange = { currentPassword = it },
-                    label = { Text("Current Password") },
-                    visualTransformation = PasswordVisualTransformation()
-                )
-                OutlinedTextField(
-                    value = newPassword,
-                    onValueChange = { newPassword = it },
-                    label = { Text("New Password") },
-                    visualTransformation = PasswordVisualTransformation()
-                )
-                OutlinedTextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = { Text("Confirm Password") },
-                    visualTransformation = PasswordVisualTransformation()
-                )
-                if (errorMessage != null) {
-                    Text(errorMessage!!, color = MaterialTheme.colorScheme.error)
-                }
             }
         }
     )
