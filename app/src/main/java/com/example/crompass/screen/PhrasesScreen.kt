@@ -18,6 +18,7 @@ import com.example.crompass.viewmodel.PhraseViewModel
 import android.speech.tts.TextToSpeech
 import androidx.compose.runtime.livedata.observeAsState
 import java.util.Locale
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +50,10 @@ fun PhrasesScreen(navController: NavHostController) {
 
     // Load phrases data on screen load
     LaunchedEffect(Unit) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            phrasesViewModel.fetchUserLanguage(userId)
+        }
         phrasesViewModel.fetchPhrases()
     }
 
@@ -95,13 +100,9 @@ fun PhrasesScreen(navController: NavHostController) {
                             shape = MaterialTheme.shapes.medium
                         ) {
                             Column(Modifier.padding(16.dp)) {
-                                // Render the phrase in the selected language (German, Croatian, etc.)
+                                val phraseText = phrase.phrases[userLanguage] ?: phrase.phrases["hr"] ?: "Unknown"
                                 Text(
-                                    text = when (userLanguage) {
-                                        "de" -> phrase.phrases["de"] ?: phrase.phrases["hr"] ?: "Unknown"
-                                        "hr" -> phrase.phrases["hr"] ?: phrase.phrases["de"] ?: "Unknown"
-                                        else -> phrase.phrases["en"] ?: "Unknown"
-                                    },
+                                    text = phraseText,
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Spacer(Modifier.height(4.dp))

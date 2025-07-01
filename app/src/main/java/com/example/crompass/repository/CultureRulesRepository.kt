@@ -12,7 +12,7 @@ class CultureRulesRepository {
         val cultureRulesList = mutableListOf<CultureRule>()
 
         try {
-            val snapshot = db.collection("cultureRules").get().await()
+            val snapshot = db.collection("culture_rules").get().await()
             for (document in snapshot.documents) {
                 val category = document.getString("category") ?: ""
                 val translations = document.get("translations") as? Map<String, String> ?: emptyMap()

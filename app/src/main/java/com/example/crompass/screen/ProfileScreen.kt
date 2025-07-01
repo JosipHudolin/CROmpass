@@ -227,9 +227,6 @@ fun EditProfileDialog(
         "cs" to "Czech"
     )
 
-    // Get the language code for the selected language
-    val selectedLanguageCode = languageCodes[language] ?: "en" // Default to "en" if no match
-
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Edit Profile") },
@@ -262,9 +259,9 @@ fun EditProfileDialog(
                 SimpleDropdown(
                     label = "Language",
                     options = languageOptions,
-                    selectedOption = languageCodeToName[selectedLanguageCode] ?: "English",
+                    selectedOption = languageCodeToName[language] ?: "English",
                     onOptionSelected = { selectedLanguage ->
-                        language = selectedLanguage
+                        language = languageCodes[selectedLanguage] ?: "en"
                     }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -272,6 +269,7 @@ fun EditProfileDialog(
         },
         confirmButton = {
             TextButton(onClick = {
+                val selectedLanguageCode = languageCodes.entries.find { it.value == language }?.value ?: language
                 onSave(
                     mapOf(
                         "firstName" to firstName,
