@@ -55,7 +55,7 @@ fun AuthScreen(
     )
 
     val languageOptions = listOf(
-        "English", "German", "French", "Italian", "Spanish", "Dutch", "Croatian", "Polish", "Swedish", "Danish", "Norwegian", "Finnish", "Slovak", "Slovenian", "Hungarian", "Czech"
+        "English", "German", "French", "Italian", "Croatian", "Polish"
     )
 
     val scrollState = rememberScrollState()
@@ -218,18 +218,8 @@ fun AuthScreen(
                             "German" to "de",
                             "French" to "fr",
                             "Italian" to "it",
-                            "Spanish" to "es",
-                            "Dutch" to "nl",
                             "Croatian" to "hr",
-                            "Polish" to "pl",
-                            "Swedish" to "sv",
-                            "Danish" to "da",
-                            "Norwegian" to "no",
-                            "Finnish" to "fi",
-                            "Slovak" to "sk",
-                            "Slovenian" to "sl",
-                            "Hungarian" to "hu",
-                            "Czech" to "cs"
+                            "Polish" to "pl"
                         )
 
                         val languageCode = languageCodes[language] ?: "en"

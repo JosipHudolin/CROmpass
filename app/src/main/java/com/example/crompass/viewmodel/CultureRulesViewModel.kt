@@ -18,6 +18,15 @@ class CultureRulesViewModel : ViewModel() {
     private val _userLanguage = MutableLiveData("en")
     val userLanguage: LiveData<String> = _userLanguage
 
+    private val _selectedLanguage = MutableLiveData("en")
+    val selectedLanguage: LiveData<String> = _selectedLanguage
+
+    private val _selectedCategory = MutableLiveData("All")
+    val selectedCategory: LiveData<String> = _selectedCategory
+
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
     // LiveData to hold the list of culture rules
     var cultureRules = mutableStateListOf<CultureRule>()
 
@@ -28,9 +37,10 @@ class CultureRulesViewModel : ViewModel() {
 
     // Fetch culture rules from the repository
     private fun fetchCultureRules() {
+        _isLoading.value = true
+
         viewModelScope.launch {
             try {
-                // Get culture rules from the repository
                 val rules = repository.getCultureRules()
                 if (rules.isEmpty()) {
                     Log.d("CultureRulesViewModel", "No culture rules found")
@@ -41,8 +51,9 @@ class CultureRulesViewModel : ViewModel() {
                 cultureRules.clear()
                 cultureRules.addAll(rules)
             } catch (e: Exception) {
-                // Handle error (you might want to display an error message to the user)
                 Log.e("CultureRulesViewModel", "Error fetching culture rules: ${e.message}")
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -57,5 +68,23 @@ class CultureRulesViewModel : ViewModel() {
             .addOnFailureListener {
                 _userLanguage.value = "en"
             }
+    }
+
+    fun setSelectedLanguage(language: String) {
+        _selectedLanguage.value = language
+    }
+
+    fun setSelectedCategory(category: String) {
+        _selectedCategory.value = category
+    }
+
+    fun getFilteredCultureRules(): List<CultureRule> {
+        val language = _selectedLanguage.value ?: "en"
+        val category = _selectedCategory.value ?: "All"
+
+        return cultureRules.filter { rule ->
+            (category == "All" || rule.category.replace("_", " ").replaceFirstChar { it.uppercase() } == category) &&
+            rule.translations.containsKey(language)
+        }
     }
 }

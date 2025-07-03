@@ -185,7 +185,7 @@ fun EditProfileDialog(
     )
 
     val languageOptions = listOf(
-        "English", "German", "French", "Italian", "Spanish", "Dutch", "Croatian", "Polish", "Swedish", "Danish", "Norwegian", "Finnish", "Slovak", "Slovenian", "Hungarian", "Czech"
+        "English", "German", "French", "Italian", "Croatian", "Polish"
     )
 
     // Language codes map
@@ -194,18 +194,8 @@ fun EditProfileDialog(
         "German" to "de",
         "French" to "fr",
         "Italian" to "it",
-        "Spanish" to "es",
-        "Dutch" to "nl",
         "Croatian" to "hr",
-        "Polish" to "pl",
-        "Swedish" to "sv",
-        "Danish" to "da",
-        "Norwegian" to "no",
-        "Finnish" to "fi",
-        "Slovak" to "sk",
-        "Slovenian" to "sl",
-        "Hungarian" to "hu",
-        "Czech" to "cs"
+        "Polish" to "pl"
     )
 
     val languageCodeToName = mapOf(
@@ -213,18 +203,8 @@ fun EditProfileDialog(
         "de" to "German",
         "fr" to "French",
         "it" to "Italian",
-        "es" to "Spanish",
-        "nl" to "Dutch",
         "hr" to "Croatian",
-        "pl" to "Polish",
-        "sv" to "Swedish",
-        "da" to "Danish",
-        "no" to "Norwegian",
-        "fi" to "Finnish",
-        "sk" to "Slovak",
-        "sl" to "Slovenian",
-        "hu" to "Hungarian",
-        "cs" to "Czech"
+        "pl" to "Polish"
     )
 
     AlertDialog(
