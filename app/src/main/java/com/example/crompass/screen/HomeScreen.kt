@@ -132,7 +132,7 @@ fun HomeButton(
                 when (label) {
                     "Phrases" -> navController.navigate("phrases")
                     "Culture" -> { navController.navigate("culture") }
-                    "Translate" -> { /* TODO */ }
+                    "Translate" -> { navController.navigate("translator") }
                     "Map" -> { /* TODO */ }
                     "Emergency" -> { /* TODO */ }
                     "Favorites" -> { /* TODO */ }

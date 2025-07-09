@@ -9,6 +9,7 @@ import com.example.crompass.screen.CultureScreen
 import com.example.crompass.screen.HomeScreen
 import com.example.crompass.screen.PhrasesScreen
 import com.example.crompass.screen.ProfileScreen
+import com.example.crompass.screen.TranslatorScreen
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -39,6 +40,10 @@ fun AppNavigation() {
 
         composable("culture") {
             CultureScreen(navController = navController)
+        }
+
+        composable("translator") {
+            TranslatorScreen(navController = navController)
         }
     }
 }
