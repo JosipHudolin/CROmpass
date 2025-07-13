@@ -9,7 +9,7 @@ import org.json.JSONObject
 
 class TranslatorRepository {
 
-    private val apiKey = "AIzaSyAsjpoWGgWkxssVGB1qrM7WhhI8je5LrdI"  // Replace this with your real key
+    private val apiKey = "AIzaSyDCX8alVaVeLsOm5CXL4xJRBDR_AfPrEms"  // Replace this with your real key
     private val client = OkHttpClient()
 
     fun translate(text: String, targetLanguage: String): TranslationResult {

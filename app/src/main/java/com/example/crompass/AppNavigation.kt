@@ -6,17 +6,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.crompass.screen.AuthScreen
 import com.example.crompass.screen.CultureScreen
+import com.example.crompass.screen.DestinationScreen
 import com.example.crompass.screen.HomeScreen
 import com.example.crompass.screen.PhrasesScreen
 import com.example.crompass.screen.ProfileScreen
 import com.example.crompass.screen.TranslatorScreen
-import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val isAuthenticated = Firebase.auth.currentUser != null
+    val isAuthenticated = FirebaseAuth.getInstance().currentUser != null
 
     NavHost(
         navController = navController,
@@ -44,6 +45,9 @@ fun AppNavigation() {
 
         composable("translator") {
             TranslatorScreen(navController = navController)
+        }
+        composable("destination") {
+            DestinationScreen(navController = navController)
         }
     }
 }
