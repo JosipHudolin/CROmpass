@@ -5,12 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -25,107 +27,86 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.crompass.viewmodel.DestinationViewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-fun DestinationScreen(navController: NavHostController, viewModel: DestinationViewModel = viewModel()) {
-    val destinations by viewModel.destinations.collectAsState()
-    var selectedCategory by remember { mutableStateOf("All") }
+fun DestinationScreen(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    viewModel: DestinationViewModel = viewModel()
+) {
+    val destinations by viewModel.filteredLocations.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val context = LocalContext.current
 
-    val categories = listOf("All", "Nature", "History") +
-            destinations.map { it.category }.distinct().filter { it != "Nature" && it != "History" }
+    var isDropdownExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        viewModel.loadDestinations()
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
-    ) {
-        // Dropdown for category filter
-        var expanded by remember { mutableStateOf(false) }
-
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 32.dp)) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = MaterialTheme.shapes.medium
-                    )
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .clickable { expanded = true }
-            ) {
-                Text(
-                    text = selectedCategory,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+    Column(modifier = modifier.fillMaxSize()) {
+        // Category filter
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+                .clickable { isDropdownExpanded = true }
+                .padding(12.dp)
+        ) {
+            Text(text = selectedCategory ?: "Select category")
             DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+                expanded = isDropdownExpanded,
+                onDismissRequest = { isDropdownExpanded = false }
             ) {
+                val categories = listOf("All", "Nature", "History")
                 categories.forEach { category ->
                     DropdownMenuItem(
                         text = { Text(category) },
                         onClick = {
-                            selectedCategory = category
-                            expanded = false
+                            viewModel.updateCategory(if (category == "All") null else category)
+                            isDropdownExpanded = false
                         }
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // List of destinations
-        val filtered = if (selectedCategory == "All") {
-            destinations
-        } else {
-            destinations.filter { it.category == selectedCategory }
+        // Request location permission
+        LaunchedEffect(Unit) {
+            // You should implement runtime permission request here if needed
+            // For example, using Accompanist Permissions or your own logic
+            // This is a placeholder for requesting location permission
         }
 
-        Box(
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(LatLng(45.815399, 15.966568), 6f)
+        }
+
+        GoogleMap(
             modifier = Modifier
                 .fillMaxSize()
+                .weight(1f),
+            cameraPositionState = cameraPositionState,
+            properties = com.google.maps.android.compose.MapProperties(isMyLocationEnabled = true),
+            uiSettings = com.google.maps.android.compose.MapUiSettings(myLocationButtonEnabled = true)
         ) {
-            LazyColumn {
-                items(filtered) { destination ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(
-                                text = destination.name,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = destination.description,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = destination.category,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
+            destinations.forEach { destination ->
+                val geoPoint = destination.location
+                if (geoPoint != null) {
+                    Marker(
+                        state = MarkerState(position = LatLng(geoPoint.latitude, geoPoint.longitude)),
+                        title = destination.name,
+                        snippet = destination.description
+                    )
                 }
             }
         }

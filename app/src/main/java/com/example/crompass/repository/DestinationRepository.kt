@@ -7,9 +7,15 @@ import kotlinx.coroutines.tasks.await
 class DestinationRepository {
     private val db = FirebaseFirestore.getInstance()
 
-    suspend fun fetchDestinations(): List<Destination> {
+    suspend fun fetchDestinations(category: String? = null): List<Destination> {
         return try {
-            val snapshot = db.collection("destinations").get().await()
+            val query = if (category.isNullOrBlank()) {
+                db.collection("destinations")
+            } else {
+                db.collection("destinations").whereEqualTo("category", category)
+            }
+
+            val snapshot = query.get().await()
             snapshot.documents.mapNotNull { it.toObject(Destination::class.java)?.copy(id = it.id) }
         } catch (e: Exception) {
             emptyList()

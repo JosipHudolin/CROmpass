@@ -1,5 +1,6 @@
 package com.example.crompass.repository
 
+import com.example.crompass.BuildConfig
 import com.example.crompass.model.TranslationResult
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
@@ -9,7 +10,7 @@ import org.json.JSONObject
 
 class TranslatorRepository {
 
-    private val apiKey = "AIzaSyDCX8alVaVeLsOm5CXL4xJRBDR_AfPrEms"  // Replace this with your real key
+    val apiKey = BuildConfig.GOOGLE_API_KEY
     private val client = OkHttpClient()
 
     fun translate(text: String, targetLanguage: String): TranslationResult {

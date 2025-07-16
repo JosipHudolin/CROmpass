@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CROmpass</string>
+    <string name="com.google.android.geo.API_KEY">AIzaSyDCX8alVaVeLsOm5CXL4xJRBDR_AfPrEms</string>
 </resources>
