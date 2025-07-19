@@ -10,6 +10,7 @@ import com.example.crompass.screen.DestinationScreen
 import com.example.crompass.screen.HomeScreen
 import com.example.crompass.screen.PhrasesScreen
 import com.example.crompass.screen.ProfileScreen
+import com.example.crompass.screen.ReviewScreen
 import com.example.crompass.screen.TranslatorScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
@@ -48,6 +49,9 @@ fun AppNavigation() {
         }
         composable("destination") {
             DestinationScreen(navController = navController)
+        }
+        composable("review") {
+            ReviewScreen(navController = navController)
         }
     }
 }

@@ -110,7 +110,7 @@ fun HomeScreen(navController: NavHostController) {
                 ) {
                     HomeButton("Map", Icons.Default.Place, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
                     HomeButton("Emergency", Icons.Default.Warning, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
-                    HomeButton("Favorites", Icons.Default.Star, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
+                    HomeButton("Reviews", Icons.Default.Star, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
                 }
             }
         }
@@ -135,7 +135,7 @@ fun HomeButton(
                     "Translate" -> { navController.navigate("translator") }
                     "Map" -> { navController.navigate("destination") }
                     "Emergency" -> { /* TODO */ }
-                    "Favorites" -> { /* TODO */ }
+                    "Reviews" -> { navController.navigate("review") }
                 }
             }
             .padding(8.dp)

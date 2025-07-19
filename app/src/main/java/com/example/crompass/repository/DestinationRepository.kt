@@ -21,4 +21,13 @@ class DestinationRepository {
             emptyList()
         }
     }
+
+    suspend fun getDestinationNameById(destinationId: String): String? {
+        return try {
+            val document = db.collection("destinations").document(destinationId).get().await()
+            document.getString("name")
+        } catch (e: Exception) {
+            null
+        }
+    }
 }
