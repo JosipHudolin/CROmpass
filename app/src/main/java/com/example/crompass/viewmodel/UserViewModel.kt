@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
-class ProfileViewModel : ViewModel() {
+class UserViewModel : ViewModel() {
 
     private val _userData = MutableLiveData<UserData?>()
     val userData: LiveData<UserData?> get() = _userData
@@ -55,6 +55,24 @@ class ProfileViewModel : ViewModel() {
             }
         } else {
             _errorMessage.postValue("User not logged in.")
+        }
+    }
+
+    fun getUserLanguage(onResult: (String?) -> Unit) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            viewModelScope.launch {
+                try {
+                    val language = userRepository.getUserLanguage(userId)
+                    onResult(language)
+                } catch (e: Exception) {
+                    _errorMessage.postValue("Error fetching language: ${e.message}")
+                    onResult(null)
+                }
+            }
+        } else {
+            _errorMessage.postValue("User not logged in.")
+            onResult(null)
         }
     }
 }

@@ -27,6 +27,20 @@ class UserRepository(private val db: FirebaseFirestore) {
             null
         }
     }
+
+    suspend fun getUserLanguage(userId: String): String? {
+        return try {
+            val document = db.collection("users").document(userId).get().await()
+            if (document.exists()) {
+                document.getString("language")
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     suspend fun updateUserData(userId: String, updatedData: Map<String, Any>) {
         try {
             db.collection("users").document(userId).update(updatedData).await()

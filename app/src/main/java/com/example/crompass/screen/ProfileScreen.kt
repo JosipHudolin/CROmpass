@@ -18,12 +18,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.crompass.model.UserData
 import com.example.crompass.utils.logout
-import com.example.crompass.viewmodel.ProfileViewModel
+import com.example.crompass.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavHostController, viewModel: ProfileViewModel = viewModel()) {
+fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = viewModel()) {
     val userData by viewModel.userData.observeAsState()
     val errorMessage by viewModel.errorMessage.observeAsState()
     var isEditDialogOpen by remember { mutableStateOf(false) }

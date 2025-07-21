@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.crompass.screen.AuthScreen
 import com.example.crompass.screen.CultureScreen
 import com.example.crompass.screen.DestinationScreen
+import com.example.crompass.screen.EmergencyScreen
 import com.example.crompass.screen.HomeScreen
 import com.example.crompass.screen.PhrasesScreen
 import com.example.crompass.screen.ProfileScreen
@@ -52,6 +53,9 @@ fun AppNavigation() {
         }
         composable("review") {
             ReviewScreen(navController = navController)
+        }
+        composable("emergency") {
+            EmergencyScreen(navController = navController)
         }
     }
 }

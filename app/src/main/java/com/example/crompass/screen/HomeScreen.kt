@@ -134,7 +134,7 @@ fun HomeButton(
                     "Culture" -> { navController.navigate("culture") }
                     "Translate" -> { navController.navigate("translator") }
                     "Map" -> { navController.navigate("destination") }
-                    "Emergency" -> { /* TODO */ }
+                    "Emergency" -> { navController.navigate("emergency") }
                     "Reviews" -> { navController.navigate("review") }
                 }
             }
