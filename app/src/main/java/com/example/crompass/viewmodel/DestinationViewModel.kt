@@ -15,6 +15,7 @@ class DestinationViewModel : ViewModel() {
 
     private val _allLocations = MutableStateFlow<List<Destination>>(emptyList())
     private val _filteredLocations = MutableStateFlow<List<Destination>>(emptyList())
+    val allLocations: StateFlow<List<Destination>> = _allLocations.asStateFlow()
     val filteredLocations: StateFlow<List<Destination>> = _filteredLocations.asStateFlow()
 
     private val _selectedCategory = MutableStateFlow<String?>(null)
@@ -44,5 +45,9 @@ class DestinationViewModel : ViewModel() {
         } else {
             _allLocations.value.filter { it.category.equals(category, ignoreCase = true) }
         }
+    }
+
+    fun getAllCategories(): List<String> {
+        return _allLocations.value.mapNotNull { it.category }.distinct()
     }
 }

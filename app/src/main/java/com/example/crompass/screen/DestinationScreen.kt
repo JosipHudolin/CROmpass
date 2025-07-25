@@ -18,10 +18,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +40,6 @@ import com.example.crompass.model.Destination
 import com.example.crompass.viewmodel.DestinationViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
@@ -56,6 +59,7 @@ fun DestinationScreen(
     val reviewViewModel: ReviewViewModel = viewModel()
     val destinations by viewModel.filteredLocations.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val allLocations: List<Destination> by viewModel.allLocations.collectAsState()
     val context = LocalContext.current
 
     var isDropdownExpanded by remember { mutableStateOf(false) }
@@ -64,6 +68,26 @@ fun DestinationScreen(
     var showReviewList by remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxSize()) {
+        // Top bar with back arrow
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp) // Added height
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .padding(12.dp)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
         // Category filter
         Box(
             modifier = Modifier
@@ -73,29 +97,32 @@ fun DestinationScreen(
                 .clickable { isDropdownExpanded = true }
                 .padding(12.dp)
         ) {
-            Text(text = selectedCategory ?: "Select category")
+            Text(
+                text = selectedCategory ?: "Select category",
+                color = Color.White
+            )
             DropdownMenu(
                 expanded = isDropdownExpanded,
                 onDismissRequest = { isDropdownExpanded = false }
             ) {
-                val categories = listOf("All", "Nature", "History")
+                val allCategories = viewModel.getAllCategories()
+                val categories = listOf("All") + allCategories
                 categories.forEach { category ->
                     DropdownMenuItem(
-                        text = { Text(category) },
+                        text = {
+                            Text(
+                                text = category,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White
+                            )
+                        },
                         onClick = {
-                            viewModel.updateCategory(if (category == "All") null else category)
+                            viewModel.updateCategory(category.takeIf { it != "All" })
                             isDropdownExpanded = false
                         }
                     )
                 }
             }
-        }
-
-        // Request location permission
-        LaunchedEffect(Unit) {
-            // You should implement runtime permission request here if needed
-            // For example, using Accompanist Permissions or your own logic
-            // This is a placeholder for requesting location permission
         }
 
         val cameraPositionState = rememberCameraPositionState {

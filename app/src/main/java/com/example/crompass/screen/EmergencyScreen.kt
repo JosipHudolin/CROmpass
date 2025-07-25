@@ -18,6 +18,8 @@ import com.example.crompass.viewmodel.EmergencyViewModel
 import androidx.compose.foundation.shape.CircleShape
 import com.example.crompass.viewmodel.UserViewModel
 import androidx.core.net.toUri
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 
 @Composable
 fun EmergencyScreen(
@@ -54,6 +56,16 @@ fun EmergencyScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.padding(bottom = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White
+                )
+            }
 
             Text(
                 text = "Emergency Contacts",

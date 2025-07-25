@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -25,6 +28,8 @@ fun ReviewScreen(
 
     val reviews by reviewViewModel.reviews.collectAsState()
     val destinationNameMap by reviewViewModel.destinationNames.collectAsState()
+
+    val isDestinationMapReady = destinationNameMap.isNotEmpty()
 
     // Trigger fetching destination names after reviews load
     LaunchedEffect(reviews) {
@@ -53,82 +58,85 @@ fun ReviewScreen(
         }
     }
 
-    // Refetch filteredReviews only after destination names are available
-    LaunchedEffect(destinationNameMap) {
-        filteredReviews = if (selectedDestination == "All") {
-            reviews
-        } else {
-            reviews.filter {
-                destinationNameMap[it.destinationId] == selectedDestination
-            }
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 48.dp) // adjust this padding as needed
-    ) {
-        Column(
+    Surface(color = Color(0xFF121212)) {
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(top = 48.dp) // adjust this padding as needed
         ) {
-            var expanded by remember { mutableStateOf(false) }
-
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
-                TextField(
-                    readOnly = true,
-                    value = selectedDestination,
-                    onValueChange = {},
-                    label = { Text("Filter by destination") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("All") },
-                        onClick = {
-                            selectedDestination = "All"
-                            expanded = false
-                        }
-                    )
-                    // Show only unique, non-"All" names
-                    destinationNames.filter { it != "All" }.forEach { name ->
-                        DropdownMenuItem(
-                            text = { Text(name) },
-                            onClick = {
-                                selectedDestination = name
-                                expanded = false
-                            }
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
                     }
                 }
-            }
+                Spacer(modifier = Modifier.height(8.dp))
+                var expanded by remember { mutableStateOf(false) }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(filteredReviews) { review ->
-                    Card(
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        if (isDestinationMapReady) expanded = !expanded
+                    }
+                ) {
+                    TextField(
+                        readOnly = true,
+                        value = selectedDestination,
+                        onValueChange = {},
+                        label = { Text("Filter by destination") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        shape = MaterialTheme.shapes.medium,
-                        elevation = CardDefaults.cardElevation(4.dp)
+                            .menuAnchor(), // Ovo je KLJUČNO
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(), // Preporučeno
+                        enabled = isDestinationMapReady
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
                     ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text("Rating: ${review.rating} ★", style = MaterialTheme.typography.titleMedium)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(review.reviewText)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text("Destination: ${destinationNameMap[review.destinationId] ?: review.destinationId}", style = MaterialTheme.typography.bodySmall)
+                        destinationNames.forEach { name ->
+                            DropdownMenuItem(
+                                text = { Text(name) },
+                                onClick = {
+                                    selectedDestination = name
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(filteredReviews) { review ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            shape = MaterialTheme.shapes.medium,
+                            elevation = CardDefaults.cardElevation(4.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text("Rating: ${review.rating} ★", style = MaterialTheme.typography.titleMedium)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(review.reviewText)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("Destination: ${destinationNameMap[review.destinationId] ?: review.destinationId}", style = MaterialTheme.typography.bodySmall)
+                            }
                         }
                     }
                 }
