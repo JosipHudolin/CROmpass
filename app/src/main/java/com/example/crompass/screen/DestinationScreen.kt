@@ -49,6 +49,10 @@ import com.example.crompass.model.Review
 import com.example.crompass.viewmodel.ReviewViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.res.stringResource
+import com.example.crompass.R
 
 @Composable
 fun DestinationScreen(
@@ -59,32 +63,51 @@ fun DestinationScreen(
     val reviewViewModel: ReviewViewModel = viewModel()
     val destinations by viewModel.filteredLocations.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
-    val allLocations: List<Destination> by viewModel.allLocations.collectAsState()
     val context = LocalContext.current
 
     var isDropdownExpanded by remember { mutableStateOf(false) }
     var selectedDestination by remember { mutableStateOf<Destination?>(null) }
     var showReviewDialog by remember { mutableStateOf(false) }
     var showReviewList by remember { mutableStateOf(false) }
+    val searchQuery by viewModel.searchQuery.collectAsState("")
 
     Column(modifier = modifier.fillMaxSize()) {
-        // Top bar with back arrow
+        // Top bar with back arrow and search field
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp) // Added height
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .height(56.dp)
+                .background(MaterialTheme.colorScheme.surface)
         ) {
-            IconButton(
-                onClick = { navController.popBackStack() },
+            Row(
                 modifier = Modifier
-                    .padding(12.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onSurface
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = stringResource(R.string.back),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                TextField(
+                    value = searchQuery,
+                    onValueChange = { viewModel.updateSearchQuery(it) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp),
+                    label = { Text(stringResource(R.string.search_destinations)) },
+                    singleLine = true,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                    )
                 )
             }
         }
@@ -98,7 +121,7 @@ fun DestinationScreen(
                 .padding(12.dp)
         ) {
             Text(
-                text = selectedCategory ?: "Select category",
+                text = selectedCategory ?: stringResource(R.string.select_category),
                 color = Color.White
             )
             DropdownMenu(
@@ -171,7 +194,7 @@ fun DestinationScreen(
                     Text(text = destination.description, style = MaterialTheme.typography.bodyMedium)
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Navigate with Google Maps",
+                        text = stringResource(R.string.navigate_with_google_maps),
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .clickable {
@@ -185,7 +208,7 @@ fun DestinationScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Leave a Review",
+                        text = stringResource(R.string.leave_review),
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .clickable {
@@ -194,11 +217,11 @@ fun DestinationScreen(
                             .padding(vertical = 8.dp)
                     )
                     Text(
-                        text = "Check Reviews",
+                        text = stringResource(R.string.check_reviews),
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .clickable {
-                                reviewViewModel.fetchPublicReviews(destination.id)
+                                reviewViewModel.getPublicReviewsByDestination(destination.id)
                                 showReviewList = true
                             }
                             .padding(vertical = 8.dp)
@@ -216,7 +239,7 @@ fun DestinationScreen(
                         destinationId = selectedDestination!!.id,
                         rating = rating,
                         reviewText = text,
-                        isPublic = isPublic,
+                        public = isPublic,
                         userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
                         timestamp = Timestamp.now()
                     )
@@ -242,7 +265,7 @@ fun DestinationScreen(
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
-                            Text("Rating: ${review.rating} ★")
+                            Text(stringResource(R.string.rating) + ": ${review.rating} ★")
                             Text(review.reviewText ?: "")
                         }
                     }
@@ -265,10 +288,10 @@ fun ReviewModal(
 
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Leave a Review for ${destination.name}") },
+        title = { Text(stringResource(R.string.leave_review_for, destination.name)) },
         text = {
             Column {
-                Text("Rating")
+                Text(stringResource(R.string.rating))
                 Row {
                     ratingOptions.forEach { star ->
                         Text(
@@ -284,7 +307,7 @@ fun ReviewModal(
                 androidx.compose.material3.OutlinedTextField(
                     value = reviewText,
                     onValueChange = { reviewText = it },
-                    label = { Text("Your review") }
+                    label = { Text(stringResource(R.string.your_review)) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
@@ -292,7 +315,7 @@ fun ReviewModal(
                         checked = isPublic,
                         onCheckedChange = { isPublic = it }
                     )
-                    Text("Public Review")
+                    Text(stringResource(R.string.public_review))
                 }
             }
         },
@@ -300,12 +323,12 @@ fun ReviewModal(
             androidx.compose.material3.TextButton(onClick = {
                 onSubmit(selectedRating, reviewText, isPublic)
             }) {
-                Text("Submit")
+                Text(stringResource(R.string.submit))
             }
         },
         dismissButton = {
             androidx.compose.material3.TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

@@ -9,8 +9,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
@@ -21,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.crompass.viewmodel.CultureRulesViewModel
+import androidx.compose.ui.res.stringResource
+import com.example.crompass.R
 
 @Composable
 fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewModel = viewModel()) {
@@ -52,7 +52,7 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
         ) {
             androidx.compose.material3.Icon(
                 imageVector = androidx.compose.material.icons.Icons.Default.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(28.dp)
@@ -61,14 +61,14 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
             )
 
             Text(
-                text = "Cultural Rules",
+                text = stringResource(R.string.cultural_rules),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary
             )
         }
 
         Text(
-            text = "Explore cultural etiquette and behavior tips.",
+            text = stringResource(R.string.explore_culture),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 24.dp)
@@ -78,7 +78,7 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
         val availableCategories = listOf("All") + cultureRules.map { it.category.replace("_", " ").replaceFirstChar { c -> c.uppercase() } }.distinct()
 
         SimpleDropdown(
-            label = "Language",
+            label = stringResource(R.string.language),
             options = availableLanguages.map { languageCodeToName[it] ?: it },
             selectedOption = languageCodeToName[selectedLanguage] ?: selectedLanguage,
             onOptionSelected = { selectedName ->
@@ -90,7 +90,7 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
         Spacer(modifier = Modifier.height(8.dp))
 
         SimpleDropdown(
-            label = "Category",
+            label = stringResource(R.string.select_category),
             options = availableCategories,
             selectedOption = selectedCategory,
             onOptionSelected = { viewModel.setSelectedCategory(it) }
@@ -100,13 +100,13 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
 
         if (isLoading) {
             Text(
-                text = "Loading cultural rules...",
+                text = stringResource(R.string.loading_culture_rules),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
         } else if (cultureRules.isEmpty()) {
             Text(
-                text = "No culture rules available.",
+                text = stringResource(R.string.no_culture_rules),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )

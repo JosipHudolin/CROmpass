@@ -5,24 +5,30 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.crompass.ui.theme.CROmpassTheme
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.crompass.ui.theme.CROmpassTheme
+import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.CompositionLocalProvider
+import com.example.crompass.utils.LocalAppLocale
+import com.example.crompass.utils.LocaleHelper
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
-
     private val LOCATION_PERMISSIONS = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        val updatedContext = LocaleHelper.setLocale(newBase)
+        super.attachBaseContext(updatedContext)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +38,23 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CROmpassTheme {
-                AppNavigation()
+                val language = remember { mutableStateOf(Locale.getDefault().language) }
+                val localeTrigger = remember { mutableStateOf(0) }
+
+                CompositionLocalProvider(LocalAppLocale provides Locale(language.value)) {
+                    val trigger = localeTrigger.value // Forces recomposition when value changes
+                    val navController = rememberNavController()
+                    AppNavigation(
+                        navController = navController,
+                        onLanguageChange = { newLang ->
+                            val sharedPref = getSharedPreferences("Settings", MODE_PRIVATE)
+                            sharedPref.edit().putString("language", newLang).apply()
+                            LocaleHelper.setLocale(this@MainActivity, newLang)
+                            finish()
+                            startActivity(intent)
+                        }
+                    )
+                }
             }
         }
     }

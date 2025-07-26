@@ -20,6 +20,8 @@ import com.example.crompass.viewmodel.UserViewModel
 import androidx.core.net.toUri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.ui.res.stringResource
+import com.example.crompass.R
 
 @Composable
 fun EmergencyScreen(
@@ -43,7 +45,7 @@ fun EmergencyScreen(
     val filteredTips = if (selectedCategory == "All") tips else tips.filter { it.category == selectedCategory }
 
     LaunchedEffect(Unit) {
-        viewModel.fetchData()
+        viewModel.getEmergencyData()
     }
 
     Box(
@@ -62,13 +64,13 @@ fun EmergencyScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back),
                     tint = Color.White
                 )
             }
 
             Text(
-                text = "Emergency Contacts",
+                text = stringResource(R.string.emergency_contacts),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(vertical = 8.dp),
@@ -94,7 +96,7 @@ fun EmergencyScreen(
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
-                        text = "Emergency Tips",
+                        text = stringResource(R.string.emergency_tips),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 8.dp),
@@ -106,12 +108,12 @@ fun EmergencyScreen(
 
                     Box {
                         OutlinedButton(onClick = { expanded = true }) {
-                            Text(selectedCategory)
+                            Text(if (selectedCategory == "All") stringResource(R.string.all) else selectedCategory)
                         }
                         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                             categories.forEach { category ->
                                 DropdownMenuItem(
-                                    text = { Text(category) },
+                                    text = { Text(text = if (category == "All") stringResource(R.string.all) else category) },
                                     onClick = {
                                         selectedCategory = category
                                         expanded = false
@@ -139,7 +141,7 @@ fun EmergencyScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Text(
-                                text = tip.translations.getOrElse(language ?: "en") { "No tip available" },
+                                text = tip.translations.getOrElse(language ?: "en") { stringResource(R.string.unknown) },
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -149,7 +151,7 @@ fun EmergencyScreen(
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
-                        text = "Find Nearby Help",
+                        text = stringResource(R.string.find_nearby_help),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 8.dp),
@@ -157,10 +159,10 @@ fun EmergencyScreen(
                     )
 
                     val emergencyPlaces = mapOf(
-                        "Hospital" to "Bolnica",
-                        "Police" to "Policija",
-                        "Firefighters" to "Vatrogasci",
-                        "Pharmacy" to "Ljekarna"
+                        stringResource(R.string.hospital) to "Bolnica",
+                        stringResource(R.string.police) to "Policija",
+                        stringResource(R.string.fire_department) to "Vatrogasci",
+                        stringResource(R.string.pharmacy) to "Ljekarna"
                     )
 
                     emergencyPlaces.forEach { (englishLabel, croatianQuery) ->
@@ -175,7 +177,7 @@ fun EmergencyScreen(
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp)
                         ) {
-                            Text("Search for $englishLabel")
+                            Text(stringResource(R.string.search_for) + " $englishLabel")
                         }
                     }
                 }
@@ -197,7 +199,7 @@ fun EmergencyScreen(
                 .padding(bottom = 24.dp, end = 16.dp)
                 .size(64.dp)
         ) {
-            Text("112", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.general_emergency), style = MaterialTheme.typography.titleMedium)
         }
     }
 }

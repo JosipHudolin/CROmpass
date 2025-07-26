@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Application -->
+    <string name="app_name">CROmpass</string>
+    <string name="logout">Logout</string>
+    <string name="settings">Settings</string>
+    <!-- Cultural Rules -->
+    <string name="phrases">Phrases</string>
+    <string name="culture">Culture</string>
+    <!-- Translation and Language -->
+    <string name="translate">Translate</string>
+    <!-- Reviews -->
+    <string name="reviews">Reviews</string>
+    <!-- Emergency Services -->
+    <string name="emergency">Emergency</string>
+    <!-- Phrasebook -->
+    <string name="common_phrases">Common phrases</string>
+    <string name="cultural_rules">Cultural rules</string>
+    <string name="explore_culture">Explore etiquette and behavior rules</string>
+    <string name="target_langugage">Target language</string>
+    <string name="translation">Translation</string>
+    <string name="speak">Speak</string>
+    <string name="recent_translation">Recent translations</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="filter_by_destination">Filter by destination</string>
+    <string name="my_private_reviews">My private reviews</string>
+    <string name="public_reviews">Public reviews</string>
+    <string name="rating">Rating</string>
+    <string name="destination">Destination</string>
+    <string name="emergency_contacts">Emergency contacts</string>
+    <string name="roadside_assistance">Roadside assistance</string>
+    <string name="change_language">Change language</string>
+    <string name="general_emergency">Emergency services</string>
+    <string name="ambulance">Ambulance</string>
+    <string name="fire_department">Fire department</string>
+    <string name="police">Police</string>
+    <string name="emergency_tips">Emergency tips</string>
+    <!-- Map and Navigation -->
+    <string name="navigate_with_google_maps">Navigate with Google Maps</string>
+    <string name="leave_review">Leave a review</string>
+    <string name="check_reviews">Check reviews</string>
+    <string name="leave_review_for">Leave a review for %1$s</string>
+    <string name="your_review">Your review</string>
+    <string name="public_review">Public review</string>
+    <string name="submit">Submit</string>
+    <string name="cancel">Cancel</string>
+    <!-- General Messages -->
+    <string name="unknown_error">Unknown error</string>
+    <string name="unknown_hr">Unknown (HR)</string>
+    <string name="unknown">Unknown</string>
+    <string name="save">Save</string>
+    <string name="new_password">New password</string>
+    <string name="current_password">Current password</string>
+    <string name="hospital">Hospital</string>
+    <string name="pharmacy">Pharmacy</string>
+    <string name="all">All</string>
+    <!-- Validation Messages -->
+    <string name="fill_all_fields">Please fill in all fields.</string>
+    <string name="age_number_required">Age must be a number.</string>
+    <string name="passwords_no_match">Passwords do not match</string>
+    <!-- Authentication -->
+    <string name="login">Login</string>
+    <string name="no_account_register">Don\'t have an account? Register</string>
+    <string name="have_account_login">Already have an account? Login</string>
+    <string name="select_option">Select…</string>
+    <string name="no_culture_rules">No cultural rules available.</string>
+    <string name="loading_culture_rules">Loading cultural rules…</string>
+    <string name="back">Back</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="password">Password</string>
+    <string name="last_name">Last Name</string>
+    <string name="medical">Medical</string>
+    <string name="fire">Fire</string>
+    <string name="register">Register</string>
+    <string name="road">Road</string>
+    <string name="find_nearby_help">Find nearby help</string>
+    <string name="search_for">Search for</string>
+    <!-- Theme -->
+    <string name="theme">Theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system_default">System</string>
+    <string name="user">User</string>
+    <string name="search_destinations">Search destinations</string>
+    <string name="select_category">Select category</string>
+    <!-- Navigation -->
+    <string name="home">Home</string>
+    <string name="explore">Explore</string>
+    <string name="profile">Profile</string>
+    <!-- User Profile -->
+    <string name="my_profile">My profile</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="age">Age</string>
+    <string name="gender">Gender</string>
+    <string name="country">Country</string>
+    <string name="edit_info">Edit info</string>
+    <string name="change_password">Change password</string>
+    <string name="french">French</string>
+    <string name="german">German</string>
+    <string name="italian">Italian</string>
+    <string name="polish">Polish</string>
+    <string name="croatian">Croatian</string>
+    <string name="com.google.android.geo.API_KEY">AIzaSyDCX8alVaVeLsOm5CXL4xJRBDR_AfPrEms</string>
+</resources>

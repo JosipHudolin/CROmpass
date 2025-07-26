@@ -31,12 +31,12 @@ class CultureRulesViewModel : ViewModel() {
     var cultureRules = mutableStateListOf<CultureRule>()
 
     init {
-        fetchCultureRules()
-        fetchUserLanguage()
+        getCultureRules()
+        getUserLanguage()
     }
 
     // Fetch culture rules from the repository
-    private fun fetchCultureRules() {
+    private fun getCultureRules() {
         _isLoading.value = true
 
         viewModelScope.launch {
@@ -58,7 +58,7 @@ class CultureRulesViewModel : ViewModel() {
         }
     }
 
-    fun fetchUserLanguage() {
+    fun getUserLanguage() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirebaseFirestore.getInstance().collection("users").document(userId).get()
             .addOnSuccessListener { document ->

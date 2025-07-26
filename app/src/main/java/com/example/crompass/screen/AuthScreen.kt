@@ -23,9 +23,11 @@ import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.crompass.R
 import com.example.crompass.utils.loginUser
 import com.example.crompass.utils.registerUser
 
@@ -47,6 +49,13 @@ fun AuthScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
 
+    val fillAllFields = stringResource(R.string.fill_all_fields)
+    val ageNumberRequired = stringResource(R.string.age_number_required)
+    val loginLabel = stringResource(R.string.login)
+    val registerLabel = stringResource(R.string.register)
+    val noAccountRegister = stringResource(R.string.no_account_register)
+    val haveAccountLogin = stringResource(R.string.have_account_login)
+
     // Dropdown options and expanded states
     val genderOptions = listOf("Male", "Female", "Other")
 
@@ -59,6 +68,7 @@ fun AuthScreen(
     )
 
     val scrollState = rememberScrollState()
+    val passwordsNoMatch = stringResource(R.string.passwords_no_match)
 
     Box(
         modifier = Modifier
@@ -73,14 +83,14 @@ fun AuthScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "CROmpass",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
             Text(
-                text = if (isLoginMode) "Login" else "Register",
+                text = if (isLoginMode) loginLabel else registerLabel,
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -90,7 +100,7 @@ fun AuthScreen(
                 OutlinedTextField(
                     value = firstName,
                     onValueChange = { firstName = it },
-                    label = { Text("First Name") },
+                    label = { Text(stringResource(R.string.name)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
                 )
@@ -99,7 +109,7 @@ fun AuthScreen(
                 OutlinedTextField(
                     value = lastName,
                     onValueChange = { lastName = it },
-                    label = { Text("Last Name") },
+                    label = { Text(stringResource(R.string.last_name)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
                 )
@@ -108,7 +118,7 @@ fun AuthScreen(
                 OutlinedTextField(
                     value = age,
                     onValueChange = { age = it },
-                    label = { Text("Age") },
+                    label = { Text(stringResource(R.string.age)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
@@ -118,7 +128,7 @@ fun AuthScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 SimpleDropdown(
-                    label = "Gender",
+                    label = stringResource(R.string.gender),
                     options = genderOptions,
                     selectedOption = gender,
                     onOptionSelected = { gender = it }
@@ -126,7 +136,7 @@ fun AuthScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 SimpleDropdown(
-                    label = "Native Country",
+                    label = stringResource(R.string.country),
                     options = countryOptions,
                     selectedOption = country,
                     onOptionSelected = { country = it }
@@ -134,7 +144,7 @@ fun AuthScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 SimpleDropdown(
-                    label = "Native Language",
+                    label = stringResource(R.string.language),
                     options = languageOptions,
                     selectedOption = language,
                     onOptionSelected = { language = it }
@@ -145,7 +155,7 @@ fun AuthScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.email)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
@@ -155,7 +165,7 @@ fun AuthScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.password)) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = if (isLoginMode) ImeAction.Done else ImeAction.Next)
@@ -167,7 +177,7 @@ fun AuthScreen(
                 OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
-                    label = { Text("Confirm Password") },
+                    label = { Text(stringResource(R.string.confirm_password)) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
@@ -185,7 +195,7 @@ fun AuthScreen(
                         loginUser(email, password) { success, message ->
                             isLoading = false
                             if (success) {
-                                navController.navigate("home") {
+                                navController.navigate("main") {
                                     popUpTo("auth") { inclusive = true }
                                 }
                             } else {
@@ -196,19 +206,19 @@ fun AuthScreen(
                         if (firstName.isBlank() || lastName.isBlank() || age.isBlank() ||
                             gender.isBlank() || country.isBlank() || language.isBlank()
                         ) {
-                            errorMessage = "Please fill in all fields."
+                            errorMessage = fillAllFields
                             isLoading = false
                             return@Button
                         }
 
                         if (age.toIntOrNull() == null) {
-                            errorMessage = "Age must be a number."
+                            errorMessage = ageNumberRequired
                             isLoading = false
                             return@Button
                         }
 
                         if (password != confirmPassword) {
-                            errorMessage = "Passwords do not match"
+                            errorMessage = passwordsNoMatch
                             isLoading = false
                             return@Button
                         }
@@ -236,7 +246,7 @@ fun AuthScreen(
                         registerUser(email, password, userData) { success, message ->
                             isLoading = false
                             if (success) {
-                                navController.navigate("home") {
+                                navController.navigate("main") {
                                     popUpTo("auth") { inclusive = true }
                                 }
                             } else {
@@ -247,15 +257,15 @@ fun AuthScreen(
                 },
                 enabled = email.isNotBlank() && password.length >= 6
             ) {
-                Text(if (isLoginMode) "Login" else "Register")
+                Text(if (isLoginMode) loginLabel else registerLabel)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             TextButton(onClick = { isLoginMode = !isLoginMode }) {
                 Text(
-                    if (isLoginMode) "Don't have an account? Register"
-                    else "Already have an account? Login"
+                    if (isLoginMode) noAccountRegister
+                    else haveAccountLogin
                 )
             }
 
@@ -304,7 +314,7 @@ fun SimpleDropdown(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = selectedOption.ifBlank { "Select..." },
+                        text = selectedOption.ifBlank { stringResource(R.string.select_option) },
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     IconButton(onClick = { expanded = !expanded }) {

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Application -->
+    <string name="app_name">CROmpass</string>
+    <string name="logout">Déconnexion</string>
+    <string name="settings">Paramètres</string>
+    <!-- Cultural Rules -->
+    <string name="phrases">Phrases</string>
+    <string name="culture">Culture</string>
+    <!-- Translation and Language -->
+    <string name="translate">Traduire</string>
+    <!-- Reviews -->
+    <string name="reviews">Avis</string>
+    <!-- Emergency Services -->
+    <string name="emergency">Urgence</string>
+    <string name="common_phrases">Phrases courantes</string>
+    <string name="cultural_rules">Règles culturelles</string>
+    <string name="explore_culture">Explorez les règles de bienséance et de comportement</string>
+    <string name="target_langugage">Langue cible</string>
+    <string name="translation">Traduction</string>
+    <string name="speak">Parler</string>
+    <string name="recent_translation">Traductions récentes</string>
+    <string name="language">Langue</string>
+    <string name="english">Anglais</string>
+    <string name="filter_by_destination">Filtrer par destination</string>
+    <string name="my_private_reviews">Mes avis privés</string>
+    <string name="public_reviews">Avis publics</string>
+    <string name="rating">Note</string>
+    <string name="destination">Destination</string>
+    <string name="emergency_contacts">Contacts d\'urgence</string>
+    <string name="roadside_assistance">Assistance routière</string>
+    <string name="general_emergency">Services d\'urgence</string>
+    <string name="ambulance">Ambulance</string>
+    <string name="fire_department">Pompiers</string>
+    <string name="police">Police</string>
+    <string name="no_culture_rules">Aucune règle culturelle disponible.</string>
+    <string name="loading_culture_rules">Chargement des règles culturelles…</string>
+    <string name="back">Retour</string>
+    <string name="emergency_tips">Conseils en cas d\'urgence</string>
+    <string name="all">Tous</string>
+    <string name="navigate_with_google_maps">Naviguer avec Google Maps</string>
+    <string name="leave_review">Laisser un avis</string>
+    <string name="check_reviews">Voir les avis</string>
+    <!-- General Messages -->
+    <string name="unknown_error">Erreur inconnue</string>
+    <string name="unknown_hr">Inconnu (HR)</string>
+    <string name="unknown">Inconnu</string>
+    <string name="save">Enregistrer</string>
+    <string name="new_password">Nouveau mot de passe</string>
+    <string name="current_password">Mot de passe actuel</string>
+    <string name="hospital">Hôpital</string>
+    <string name="pharmacy">Pharmacie</string>
+    <string name="leave_review_for">Laisser un avis pour %1$s</string>
+    <string name="your_review">Votre avis</string>
+    <string name="public_review">Avis public</string>
+    <string name="submit">Envoyer</string>
+    <string name="cancel">Annuler</string>
+    <string name="medical">Médical</string>
+    <string name="fire">Feu</string>
+    <string name="road">Route</string>
+    <!-- Authentication -->
+    <string name="register">S\'inscrire</string>
+    <string name="find_nearby_help">Trouver de l\'aide à proximité</string>
+    <string name="search_for">Rechercher</string>
+    <!-- Theme -->
+    <string name="theme">Thème</string>
+    <string name="light">Clair</string>
+    <string name="change_language">Changer de langue</string>
+    <string name="dark">Sombre</string>
+    <string name="fill_all_fields">Veuillez remplir tous les champs.</string>
+    <string name="age_number_required">L\'âge doit être un nombre.</string>
+    <string name="passwords_no_match">Les mots de passe ne correspondent pas</string>
+    <string name="login">Connexion</string>
+    <string name="no_account_register">Pas de compte ? Inscrivez-vous</string>
+    <string name="have_account_login">Déjà un compte ? Connectez-vous</string>
+    <string name="select_option">Sélectionner…</string>
+    <string name="confirm_password">Confirmer le mot de passe</string>
+    <string name="password">Mot de passe</string>
+    <string name="last_name">Nom de famille</string>
+    <string name="system_default">Système</string>
+    <string name="user">Utilisateur</string>
+    <string name="search_destinations">Rechercher des destinations</string>
+    <string name="select_category">Sélectionner une catégorie</string>
+    <!-- Navigation -->
+    <string name="home">Accueil</string>
+    <string name="explore">Explorer</string>
+    <!-- User Profile -->
+    <string name="profile">Profil</string>
+    <string name="my_profile">Mon profil</string>
+    <string name="name">Nom</string>
+    <string name="email">Email</string>
+    <string name="age">Âge</string>
+    <string name="gender">Sexe</string>
+    <string name="country">Pays</string>
+    <string name="edit_info">Modifier les informations</string>
+    <string name="change_password">Changer le mot de passe</string>
+    <string name="french">Français</string>
+    <string name="german">Allemand</string>
+    <string name="italian">Italien</string>
+    <string name="polish">Polonais</string>
+    <string name="croatian">Croate</string>
+    <string name="com.google.android.geo.API_KEY">AIzaSyDCX8alVaVeLsOm5CXL4xJRBDR_AfPrEms</string>
+</resources>

@@ -1,9 +1,13 @@
 package com.example.crompass.screen
 
+import androidx.compose.ui.res.stringResource
+import com.example.crompass.R
+
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,26 +27,26 @@ fun CROmpassBottomBar(navController: NavHostController, currentRoute: String) {
             icon = {
                 Icon(
                     imageVector = Icons.Default.Home,
-                    contentDescription = "Home",
+                    contentDescription = stringResource(R.string.home),
                     modifier = androidx.compose.ui.Modifier.size(32.dp),
                     tint = if (currentRoute == "home") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            label = { Text("Home") },
+            label = { Text(stringResource(R.string.home)) },
             alwaysShowLabel = false
         )
         NavigationBarItem(
-            selected = currentRoute == "explore",
-            onClick = { navController.navigate("explore") },
+            selected = currentRoute == "destination",
+            onClick = { navController.navigate("destination") },
             icon = {
                 Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Explore",
+                    imageVector = Icons.Default.Place,
+                    contentDescription = stringResource(R.string.explore),
                     modifier = androidx.compose.ui.Modifier.size(32.dp),
-                    tint = if (currentRoute == "explore") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = if (currentRoute == "destination") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            label = { Text("Explore") },
+            label = { Text(stringResource(R.string.explore)) },
             alwaysShowLabel = false
         )
         NavigationBarItem(
@@ -51,12 +55,12 @@ fun CROmpassBottomBar(navController: NavHostController, currentRoute: String) {
             icon = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = "Profile",
+                    contentDescription = stringResource(R.string.profile),
                     modifier = androidx.compose.ui.Modifier.size(32.dp),
                     tint = if (currentRoute == "profile") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            label = { Text("Profile") },
+            label = { Text(stringResource(R.string.profile)) },
             alwaysShowLabel = false
         )
     }

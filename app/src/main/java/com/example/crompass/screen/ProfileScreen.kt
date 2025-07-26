@@ -20,6 +20,8 @@ import com.example.crompass.model.UserData
 import com.example.crompass.utils.logout
 import com.example.crompass.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.ui.res.stringResource
+import com.example.crompass.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +32,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
     var isChangePasswordDialogOpen by remember { mutableStateOf(false) }
 
     LaunchedEffect(true) {
-        viewModel.fetchUserData()
+        viewModel.getUserData()
     }
 
     // Reverse mapping: language code to language name
@@ -56,16 +58,13 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Profile") },
+                title = { Text(stringResource(R.string.my_profile)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
-        },
-        bottomBar = {
-            CROmpassBottomBar(navController = navController, currentRoute = "profile")
         }
     ) { padding ->
         Box(
@@ -77,7 +76,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
             when {
                 userData == null -> {
                     if (errorMessage != null) {
-                        Text(text = errorMessage ?: "Unknown error", color = MaterialTheme.colorScheme.error)
+                        Text(text = errorMessage ?: stringResource(R.string.unknown), color = MaterialTheme.colorScheme.error)
                     } else {
                         CircularProgressIndicator()
                     }
@@ -93,12 +92,12 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                         horizontalAlignment = Alignment.Start
                     ) {
                         listOf(
-                            "👤 Name" to "${userData?.firstName} ${userData?.lastName}",
-                            "📧 Email" to "${userData?.email}",
-                            "🎂 Age" to "${userData?.age}",
-                            "⚧ Gender" to "${userData?.gender}",
-                            "🌍 Country" to "${userData?.country}",
-                            "🗣️ Language" to (languageCodeToName[userData?.language] ?: "Unknown") // Map code to name here
+                            stringResource(R.string.name) to "${userData?.firstName} ${userData?.lastName}",
+                            stringResource(R.string.email) to "${userData?.email}",
+                            stringResource(R.string.age) to "${userData?.age}",
+                            stringResource(R.string.gender) to "${userData?.gender}",
+                            stringResource(R.string.country) to "${userData?.country}",
+                            stringResource(R.string.language) to (languageCodeToName[userData?.language] ?: stringResource(R.string.unknown))
                         ).forEach { (label, value) ->
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
@@ -119,7 +118,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                             onClick = { isEditDialogOpen = true },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
-                            Text("Edit Info")
+                            Text(stringResource(R.string.edit_info))
                         }
 
                         if (isEditDialogOpen) {
@@ -137,7 +136,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                             onClick = { isChangePasswordDialogOpen = true },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
-                            Text("Change Password")
+                            Text(stringResource(R.string.change_password))
                         }
 
                         if (isChangePasswordDialogOpen) {
@@ -155,7 +154,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                             onClick = { logout(navController) },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
-                            Text("Logout")
+                            Text(stringResource(R.string.logout))
                         }
                     }
                 }
@@ -209,17 +208,17 @@ fun EditProfileDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit Profile") },
+        title = { Text(stringResource(R.string.edit_info)) },
         text = {
             Column {
-                TextField(value = firstName, onValueChange = { firstName = it }, label = { Text("First Name") })
-                TextField(value = lastName, onValueChange = { lastName = it }, label = { Text("Last Name") })
-                TextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
-                TextField(value = age, onValueChange = { age = it }, label = { Text("Age") })
+                TextField(value = firstName, onValueChange = { firstName = it }, label = { Text(stringResource(R.string.name)) })
+                TextField(value = lastName, onValueChange = { lastName = it }, label = { Text(stringResource(R.string.last_name)) })
+                TextField(value = email, onValueChange = { email = it }, label = { Text(stringResource(R.string.email)) })
+                TextField(value = age, onValueChange = { age = it }, label = { Text(stringResource(R.string.age)) })
 
                 // Gender Dropdown
                 SimpleDropdown(
-                    label = "Gender",
+                    label = stringResource(R.string.gender),
                     options = genderOptions,
                     selectedOption = gender,
                     onOptionSelected = { gender = it }
@@ -228,7 +227,7 @@ fun EditProfileDialog(
 
                 // Country Dropdown
                 SimpleDropdown(
-                    label = "Country",
+                    label = stringResource(R.string.country),
                     options = countryOptions,
                     selectedOption = country,
                     onOptionSelected = { country = it }
@@ -237,7 +236,7 @@ fun EditProfileDialog(
 
                 // Language Dropdown (show names but save the language code)
                 SimpleDropdown(
-                    label = "Language",
+                    label = stringResource(R.string.language),
                     options = languageOptions,
                     selectedOption = languageCodeToName[language] ?: "English",
                     onOptionSelected = { selectedLanguage ->
@@ -263,12 +262,12 @@ fun EditProfileDialog(
                 )
                 onDismiss()
             }) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
@@ -288,12 +287,12 @@ fun ChangePasswordDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Change Password") },
+        title = { Text(stringResource(R.string.change_password)) },
         text = {
             Column {
-                TextField(value = currentPassword, onValueChange = { currentPassword = it }, label = { Text("Current Password") })
-                TextField(value = newPassword, onValueChange = { newPassword = it }, label = { Text("New Password") })
-                TextField(value = confirmPassword, onValueChange = { confirmPassword = it }, label = { Text("Confirm Password") })
+                TextField(value = currentPassword, onValueChange = { currentPassword = it }, label = { Text(stringResource(R.string.current_password)) })
+                TextField(value = newPassword, onValueChange = { newPassword = it }, label = { Text(stringResource(R.string.new_password)) })
+                TextField(value = confirmPassword, onValueChange = { confirmPassword = it }, label = { Text(stringResource(R.string.confirm_password)) })
             }
         },
         confirmButton = {
@@ -321,12 +320,12 @@ fun ChangePasswordDialog(
                 }
                 onDismiss()
             }) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

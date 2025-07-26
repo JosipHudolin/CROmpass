@@ -21,7 +21,7 @@ class UserViewModel : ViewModel() {
     private val userRepository = UserRepository(FirebaseFirestore.getInstance())
 
     // Use coroutines to fetch user data
-    fun fetchUserData() {
+    fun getUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             viewModelScope.launch {
@@ -48,7 +48,7 @@ class UserViewModel : ViewModel() {
             viewModelScope.launch {
                 try {
                     userRepository.updateUserData(userId, updatedData)
-                    fetchUserData() // Refetch updated data
+                    getUserData() // Refetch updated data
                 } catch (e: Exception) {
                     _errorMessage.postValue("Error updating data: ${e.message}")
                 }

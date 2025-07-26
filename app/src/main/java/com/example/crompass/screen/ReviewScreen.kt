@@ -1,6 +1,5 @@
 package com.example.crompass.screen
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +14,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.crompass.viewmodel.ReviewViewModel
 import com.example.crompass.model.Review
+import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.res.stringResource
+import com.example.crompass.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,19 +25,29 @@ fun ReviewScreen(
     navController: NavHostController,
     reviewViewModel: ReviewViewModel = viewModel()
 ) {
+    val userId = FirebaseAuth.getInstance().currentUser?.uid
+
     LaunchedEffect(Unit) {
-        reviewViewModel.fetchAllPublicReviews()
+        reviewViewModel.getAllPublicReviews()
+        userId?.let { reviewViewModel.getPrivateUserReviews(it) }
     }
 
     val reviews by reviewViewModel.reviews.collectAsState()
     val destinationNameMap by reviewViewModel.destinationNames.collectAsState()
+
+    val userReviews by reviewViewModel.userReviews.observeAsState(emptyList())
 
     val isDestinationMapReady = destinationNameMap.isNotEmpty()
 
     // Trigger fetching destination names after reviews load
     LaunchedEffect(reviews) {
         reviews.map { it.destinationId }.distinct().forEach { destinationId ->
-            reviewViewModel.fetchDestinationName(destinationId)
+            reviewViewModel.getDestinationName(destinationId)
+        }
+    }
+    LaunchedEffect(userReviews) {
+        userReviews.map { it.destinationId }.distinct().forEach { destinationId ->
+            reviewViewModel.getDestinationName(destinationId)
         }
     }
 
@@ -45,16 +58,22 @@ fun ReviewScreen(
     }
     var selectedDestination by remember { mutableStateOf("All") }
 
-    // Only filter reviews after destination names are loaded
-    var filteredReviews by remember { mutableStateOf(reviews) }
-    // Refetch filteredReviews only after destinationNameMap is available/changed
-    LaunchedEffect(destinationNameMap, reviews, selectedDestination) {
-        filteredReviews = if (selectedDestination == "All") {
-            reviews
+    // Maintain separate filtered lists for public and private reviews
+    var filteredPublicReviews by remember { mutableStateOf(emptyList<Review>()) }
+    var filteredPrivateReviews by remember { mutableStateOf(emptyList<Review>()) }
+
+    // Refetch filtered lists only after destinationNameMap is available/changed
+    LaunchedEffect(destinationNameMap, reviews, selectedDestination, userReviews) {
+        filteredPrivateReviews = if (selectedDestination == "All") {
+            userReviews
         } else {
-            reviews.filter {
-                destinationNameMap[it.destinationId] == selectedDestination
-            }
+            userReviews.filter { destinationNameMap[it.destinationId] == selectedDestination }
+        }
+
+        filteredPublicReviews = if (selectedDestination == "All") {
+            reviews.filter { it.public }
+        } else {
+            reviews.filter { it.public && destinationNameMap[it.destinationId] == selectedDestination }
         }
     }
 
@@ -76,7 +95,7 @@ fun ReviewScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                             tint = Color.White
                         )
                     }
@@ -94,12 +113,12 @@ fun ReviewScreen(
                         readOnly = true,
                         value = selectedDestination,
                         onValueChange = {},
-                        label = { Text("Filter by destination") },
+                        label = { Text(stringResource(R.string.filter_by_destination)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .menuAnchor(), // Ovo je KLJUČNO
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(), // Preporučeno
+                            .menuAnchor(), // This is important
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
                         enabled = isDestinationMapReady
                     )
 
@@ -120,22 +139,51 @@ fun ReviewScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(filteredReviews) { review ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            shape = MaterialTheme.shapes.medium,
-                            elevation = CardDefaults.cardElevation(4.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                Text("Rating: ${review.rating} ★", style = MaterialTheme.typography.titleMedium)
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(review.reviewText)
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text("Destination: ${destinationNameMap[review.destinationId] ?: review.destinationId}", style = MaterialTheme.typography.bodySmall)
+                    if (filteredPrivateReviews.isNotEmpty()) {
+                        item {
+                            Text(stringResource(R.string.my_private_reviews), style = MaterialTheme.typography.titleMedium, color = Color.White)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        items(filteredPrivateReviews) { review ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                shape = MaterialTheme.shapes.medium,
+                                elevation = CardDefaults.cardElevation(4.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text("${stringResource(R.string.rating)}: ${review.rating} ★", style = MaterialTheme.typography.titleMedium)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(review.reviewText)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text("${stringResource(R.string.destination)}: ${destinationNameMap[review.destinationId] ?: review.destinationId}", style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
+                        }
+                    }
+
+                    if (filteredPublicReviews.isNotEmpty()) {
+                        item {
+                            Text(stringResource(R.string.public_reviews), style = MaterialTheme.typography.titleMedium, color = Color.White)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        items(filteredPublicReviews) { review ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                shape = MaterialTheme.shapes.medium,
+                                elevation = CardDefaults.cardElevation(4.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text("${stringResource(R.string.rating)}: ${review.rating} ★", style = MaterialTheme.typography.titleMedium)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(review.reviewText)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text("${stringResource(R.string.destination)}: ${destinationNameMap[review.destinationId] ?: review.destinationId}", style = MaterialTheme.typography.bodySmall)
+                                }
                             }
                         }
                     }

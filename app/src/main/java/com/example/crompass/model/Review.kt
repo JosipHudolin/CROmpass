@@ -7,6 +7,6 @@ data class Review(
     val destinationId: String = "",
     val reviewText: String = "",
     val rating: Int = 0,
-    val isPublic: Boolean = false,
+    val public: Boolean = false, // Zbog prevođenja u Javu
     val timestamp: Timestamp = Timestamp.now()
 )

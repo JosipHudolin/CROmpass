@@ -1,4 +1,132 @@
 <resources>
+    <!-- Application -->
     <string name="app_name">CROmpass</string>
+    <string name="logout">Odjava</string>
+    <string name="settings">Postavke</string>
+    <string name="phrases">Fraze</string>
+    <string name="culture">Kultura</string>
+
+    <!-- Navigation -->
+    <string name="translate">Prevedi</string>
+    <string name="reviews">Recenzije</string>
+    <string name="emergency">Hitni slučaj</string>
+    <string name="common_phrases">Uobičajene fraze</string>
+
+    <!-- Cultural Rules -->
+    <string name="cultural_rules">Kulturna pravila</string>
+    <string name="explore_culture">Istraži kulturni bonton i pravila ponašanja</string>
+
+    <!-- Translation and Language -->
+    <string name="target_langugage">Ciljani jezik</string>
+    <string name="translation">Prijevod</string>
+    <string name="speak">Izgovori</string>
+    <string name="recent_translation">Nedavni prijevodi</string>
+    <string name="language">Jezik</string>
+    <string name="english">Engleski</string>
+    <string name="filter_by_destination">Filtriraj prema destinaciji</string>
+
+    <!-- Reviews -->
+    <string name="my_private_reviews">Moje privatne recenzije</string>
+    <string name="public_reviews">Javne recenzije</string>
+    <string name="rating">Ocjena</string>
+    <string name="no_culture_rules">Nema dostupnih kulturnih pravila.</string>
+    <string name="loading_culture_rules">Učitavanje kulturnih pravila…</string>
+
+    <!-- Navigation -->
+    <string name="back">Natrag</string>
+    <string name="destination">Destinacija</string>
+
+    <!-- Emergency Services -->
+    <string name="emergency_contacts">Hitni kontakti</string>
+    <string name="roadside_assistance">Pomoć na cesti</string>
+    <string name="general_emergency">Hitne službe</string>
+    <string name="ambulance">Hitna</string>
+    <string name="fire_department">Vatrogasci</string>
+    <string name="police">Policija</string>
+    <string name="emergency_tips">Savjeti za hitne slučajeve</string>
+
+    <!-- General Messages -->
+    <string name="all">Sve</string>
+    <string name="fill_all_fields">Ispunite sva polja.</string>
+    <string name="age_number_required">Dob mora biti broj.</string>
+    <string name="navigate_with_google_maps">Navigiraj putem Google Mapsa</string>
+
+    <!-- Reviews -->
+    <string name="leave_review">Ostavi recenziju</string>
+    <string name="check_reviews">Pogledaj recenzije</string>
+    <string name="leave_review_for">Ostavi recenziju za %1$s</string>
+    <string name="your_review">Tvoja recenzija</string>
+    <string name="public_review">Javna recenzija</string>
+    <string name="submit">Pošalji</string>
+    <string name="cancel">Odustani</string>
+
+    <!-- Authentication -->
+    <string name="passwords_no_match">Lozinke se ne podudaraju</string>
+    <string name="login">Prijava</string>
+    <string name="no_account_register">Nemate račun? Registrirajte se</string>
+    <string name="have_account_login">Već imate račun? Prijavite se</string>
+    <string name="select_option">Odaberi…</string>
+    <string name="confirm_password">Potvrdi lozinku</string>
+    <string name="password">Lozinka</string>
+
+    <!-- General Messages -->
+    <string name="unknown_error">Nepoznata pogreška</string>
+    <string name="unknown_hr">Nepoznato (HR)</string>
+    <string name="unknown">Nepoznato</string>
+
+    <!-- User Profile -->
+    <string name="last_name">Prezime</string>
+    <string name="save">Spremi</string>
+    <string name="new_password">Nova lozinka</string>
+    <string name="current_password">Trenutna lozinka</string>
+
+    <!-- Emergency Services -->
+    <string name="hospital">Bolnica</string>
+    <string name="pharmacy">Ljekarna</string>
+    <string name="medical">Medicinski</string>
+    <string name="fire">Požar</string>
+
+    <!-- Authentication -->
+    <string name="register">Registracija</string>
+
+    <!-- Emergency Services -->
+    <string name="road">Cesta</string>
+    <string name="find_nearby_help">Pronađi pomoć u blizini</string>
+
+    <!-- Translation and Language -->
+    <string name="change_language">Promijeni jezik</string>
+
+    <!-- Navigation -->
+    <string name="search_for">Pretraži</string>
+
+    <!-- Theme -->
+    <string name="theme">Tema</string>
+    <string name="light">Svjetlo</string>
+    <string name="dark">Tamno</string>
+    <string name="system_default">Sustav</string>
+
+    <!-- User Profile -->
+    <string name="user">Korisnik</string>
+    <string name="search_destinations">Pretraži destinacije</string>
+    <string name="select_category">Odaberi kategoriju</string>
+    <string name="home">Početno</string>
+    <string name="explore">Istraži</string>
+    <string name="profile">Profil</string>
+    <string name="my_profile">Moj profil</string>
+    <string name="name">Ime</string>
+    <string name="email">Email</string>
+    <string name="age">Dob</string>
+    <string name="gender">Spol</string>
+    <string name="country">Država</string>
+    <string name="edit_info">Uredi podatke</string>
+    <string name="change_password">Promijeni lozinku</string>
+
+    <!-- Translation and Language -->
+    <string name="french">Francuski</string>
+    <string name="german">Njemački</string>
+    <string name="italian">Talijanski</string>
+    <string name="polish">Poljski</string>
+    <string name="croatian">Hrvatski</string>
+
     <string name="com.google.android.geo.API_KEY">AIzaSyDCX8alVaVeLsOm5CXL4xJRBDR_AfPrEms</string>
 </resources>

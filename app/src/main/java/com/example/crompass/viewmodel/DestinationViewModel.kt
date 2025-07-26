@@ -21,13 +21,16 @@ class DestinationViewModel : ViewModel() {
     private val _selectedCategory = MutableStateFlow<String?>(null)
     val selectedCategory: StateFlow<String?> = _selectedCategory.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
     init {
-        fetchAllLocations()
+        getAllDestinations()
     }
 
-    private fun fetchAllLocations() {
+    private fun getAllDestinations() {
         viewModelScope.launch {
-            val locations = repository.fetchDestinations()
+            val locations = repository.getDestinations()
             _allLocations.value = locations
             applyFilter()
         }
@@ -38,12 +41,18 @@ class DestinationViewModel : ViewModel() {
         applyFilter()
     }
 
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+        applyFilter()
+    }
+
     private fun applyFilter() {
         val category = _selectedCategory.value
-        _filteredLocations.value = if (category == null) {
-            _allLocations.value
-        } else {
-            _allLocations.value.filter { it.category.equals(category, ignoreCase = true) }
+        val query = _searchQuery.value.lowercase()
+        _filteredLocations.value = _allLocations.value.filter { destination ->
+            val matchesCategory = category == null || destination.category.equals(category, ignoreCase = true)
+            val matchesQuery = destination.name.lowercase().contains(query) || destination.description.lowercase().contains(query)
+            matchesCategory && matchesQuery
         }
     }
 

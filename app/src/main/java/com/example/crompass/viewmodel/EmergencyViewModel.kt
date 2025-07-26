@@ -18,7 +18,7 @@ class EmergencyViewModel : ViewModel() {
     private val _tips = MutableStateFlow<List<EmergencyTip>>(emptyList())
     val tips: StateFlow<List<EmergencyTip>> = _tips
 
-    fun fetchData() {
+    fun getEmergencyData() {
         viewModelScope.launch {
             _contacts.value = repository.getEmergencyContacts()
             _tips.value = repository.getEmergencyTips()

@@ -29,7 +29,7 @@ class ReviewViewModel : ViewModel() {
     private val _destinationNames = MutableStateFlow<Map<String, String>>(emptyMap())
     val destinationNames: StateFlow<Map<String, String>> = _destinationNames
 
-    fun fetchDestinationName(destinationId: String) {
+    fun getDestinationName(destinationId: String) {
         viewModelScope.launch {
             try {
                 val name = destinationRepository.getDestinationNameById(destinationId)
@@ -40,7 +40,7 @@ class ReviewViewModel : ViewModel() {
         }
     }
 
-    fun fetchPublicReviews(destinationId: String) {
+    fun getPublicReviewsByDestination(destinationId: String) {
         viewModelScope.launch {
             try {
                 val result = repository.getReviewsForDestination(destinationId)
@@ -51,7 +51,7 @@ class ReviewViewModel : ViewModel() {
         }
     }
 
-    fun fetchAllPublicReviews() {
+    fun getAllPublicReviews() {
         viewModelScope.launch {
             try {
                 val allReviews = repository.getAllPublicReviews()
@@ -85,5 +85,17 @@ class ReviewViewModel : ViewModel() {
 
     fun clearError() {
         _errorMessage.value = null
+    }
+
+    fun getPrivateUserReviews(userId: String) {
+        viewModelScope.launch {
+            try {
+                val allUserReviews = repository.getUserReviews(userId)
+                val privateReviews = allUserReviews.filter { !it.public }
+                _userReviews.value = privateReviews
+            } catch (e: Exception) {
+                _errorMessage.value = e.message
+            }
+        }
     }
 }

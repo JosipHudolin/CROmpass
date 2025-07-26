@@ -19,6 +19,8 @@ import android.speech.tts.TextToSpeech
 import androidx.compose.runtime.livedata.observeAsState
 import java.util.Locale
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.ui.res.stringResource
+import com.example.crompass.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,24 +54,21 @@ fun PhrasesScreen(navController: NavHostController) {
     LaunchedEffect(Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
-            phrasesViewModel.fetchUserLanguage(userId)
+            phrasesViewModel.getUserLanguage(userId)
         }
-        phrasesViewModel.fetchPhrases()
+        phrasesViewModel.getPhrases()
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Common Phrases") },
+                title = { Text(stringResource(R.string.common_phrases)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
-        },
-        bottomBar = {
-            CROmpassBottomBar(navController, currentRoute = "phrases")
         }
     ) { innerPadding ->
         Box(
@@ -81,7 +80,7 @@ fun PhrasesScreen(navController: NavHostController) {
             when {
                 isLoading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
                 errorMessage != null -> Text(
-                    text = errorMessage ?: "Unknown error",
+                    text = errorMessage ?: stringResource(R.string.unknown_error),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Center)
                 )
@@ -94,13 +93,13 @@ fun PhrasesScreen(navController: NavHostController) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    val phraseText = phrase.phrases["hr"] ?: "Nepoznato"
+                                    val phraseText = phrase.phrases["hr"] ?: context.getString(R.string.unknown_hr)
                                     speak(phraseText)  // Speak in Croatian
                                 },
                             shape = MaterialTheme.shapes.medium
                         ) {
                             Column(Modifier.padding(16.dp)) {
-                                val phraseText = phrase.phrases[userLanguage] ?: phrase.phrases["hr"] ?: "Unknown"
+                                val phraseText = phrase.phrases[userLanguage] ?: phrase.phrases["hr"] ?: stringResource(R.string.unknown)
                                 Text(
                                     text = phraseText,
                                     style = MaterialTheme.typography.titleMedium
@@ -109,7 +108,7 @@ fun PhrasesScreen(navController: NavHostController) {
 
                                 // Always show Croatian translation
                                 Text(
-                                    text = "➡️ ${phrase.phrases["hr"] ?: "Nepoznato"}",
+                                    text = "➡️ ${phrase.phrases["hr"] ?: stringResource(R.string.unknown_hr)}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }

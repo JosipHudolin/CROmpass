@@ -11,9 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.crompass.R
 import com.example.crompass.viewmodel.TranslatorViewModel
 import com.example.crompass.model.TranslationResult
 import java.util.*
@@ -51,10 +53,10 @@ fun TranslatorScreen(navController: NavHostController, viewModel: TranslatorView
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Translator") },
+                title = { Text(stringResource(R.string.translate)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -70,12 +72,12 @@ fun TranslatorScreen(navController: NavHostController, viewModel: TranslatorView
             OutlinedTextField(
                 value = inputText,
                 onValueChange = { inputText = it },
-                label = { Text("Enter text") },
+                label = { Text(stringResource(R.string.search_for)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
             SimpleDropdown(
-                label = "Target Language",
+                label = stringResource(R.string.target_langugage),
                 options = languageNames.values.toList(),
                 selectedOption = languageNames[selectedLanguage] ?: "English",
                 onOptionSelected = { selectedName ->
@@ -87,7 +89,7 @@ fun TranslatorScreen(navController: NavHostController, viewModel: TranslatorView
                 onClick = { viewModel.translateText(inputText, selectedLanguage) },
                 enabled = inputText.isNotBlank()
             ) {
-                Text("Translate")
+                Text(stringResource(R.string.translation))
             }
 
             if (isLoading) {
@@ -101,13 +103,13 @@ fun TranslatorScreen(navController: NavHostController, viewModel: TranslatorView
                     tts?.language = Locale(selectedLanguage)
                     tts?.speak(it.translatedText, TextToSpeech.QUEUE_FLUSH, null, null)
                 }) {
-                    Text("Speak")
+                    Text(stringResource(R.string.speak))
                 }
             }
 
             if (recentTranslations.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(24.dp))
-                Text("Recent Translations", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.recent_translation), style = MaterialTheme.typography.titleMedium)
                 LazyColumn {
                     items(recentTranslations) { item ->
                         Text(

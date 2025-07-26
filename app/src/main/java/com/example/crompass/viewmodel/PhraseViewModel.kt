@@ -20,7 +20,7 @@ class PhraseViewModel : ViewModel() {
     val userLanguage = MutableLiveData<String>("en")
 
     // Fetch the user language from Firestore
-    fun fetchUserLanguage(userId: String) {
+    fun getUserLanguage(userId: String) {
         val db = FirebaseFirestore.getInstance()
 
         db.collection("users")
@@ -38,7 +38,7 @@ class PhraseViewModel : ViewModel() {
     }
 
     // Fetch phrases
-    fun fetchPhrases() {
+    fun getPhrases() {
         isLoading.value = true
         errorMessage.value = null
         viewModelScope.launch {
