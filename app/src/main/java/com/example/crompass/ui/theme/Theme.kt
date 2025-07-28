@@ -1,53 +1,88 @@
 package com.example.crompass.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
+import com.example.crompass.R
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+data class ThemeState(
+    val isDarkTheme: Boolean,
+    val setDarkTheme: (Boolean) -> Unit
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFFE53935),
-    onPrimary = Color.White,
-    secondary = Color(0xFF1976D2),
-    tertiary = Color(0xFF00ACC1),
-    background = Color(0xFFFAFAFA),
-    surface = Color(0xFFFFFFFF),
-    onSurface = Color.Black
+val LocalThemeState = compositionLocalOf<ThemeState> {
+    error("No ThemeState provided")
+}
+
+val Rubik = FontFamily(
+    Font(R.font.rubik_regular, FontWeight.Normal),
+    Font(R.font.rubik_medium, FontWeight.Medium),
+    Font(R.font.rubik_bold, FontWeight.Bold)
+)
+
+val AppTypography = Typography(
+    bodyLarge = TextStyle(
+        fontFamily = Rubik,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = Rubik,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = Rubik,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp
+    )
 )
 
 @Composable
 fun CROmpassTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    useDarkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val darkThemeState = remember { mutableStateOf(useDarkTheme) }
+
+    val themeState = remember {
+        ThemeState(
+            isDarkTheme = darkThemeState.value,
+            setDarkTheme = { darkThemeState.value = it }
+        )
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (darkThemeState.value) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
+        darkThemeState.value -> DarkColorScheme
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalThemeState provides themeState) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = AppTypography,
+            content = content
+        )
+    }
 }

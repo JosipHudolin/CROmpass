@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 
 @Composable
-fun MainScreen(navController: NavHostController, onLanguageChange: (String) -> Unit) {
+fun MainScreen(navController: NavHostController) {
     // Internal NavController for bottom bar/tab navigation
     val innerNavController = rememberNavController()
     val currentBackStackEntry by innerNavController.currentBackStackEntryAsState()
@@ -46,8 +46,7 @@ fun MainScreen(navController: NavHostController, onLanguageChange: (String) -> U
             composable("settings") {
                 SettingsScreen(
                     navController = innerNavController,
-                    globalNavController = navController,
-                    onLanguageChange = onLanguageChange
+                    globalNavController = navController
                 )
             }
         }

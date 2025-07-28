@@ -1,7 +1,7 @@
 package com.example.crompass.screen
 
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,9 +30,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.crompass.R
+import com.example.crompass.ui.theme.*
 
 @Composable
 fun HomeScreen(navController: NavHostController, rootNavController: NavHostController) {
@@ -40,37 +42,23 @@ fun HomeScreen(navController: NavHostController, rootNavController: NavHostContr
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(CroatianGray)
             .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceAround,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
+            Image(
+                painter = painterResource(id = R.drawable.logo_crompass),
+                contentDescription = "App Logo",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    stringResource(R.string.logout),
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
-                        Firebase.auth.signOut()
-                        rootNavController.navigate("auth") {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    }
-                )
-            }
-
-            Text(
-                text = stringResource(R.string.app_name),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(vertical = 8.dp)
+                    .size(300.dp)
+                    .padding(vertical =8.dp)
+                    .align(Alignment.CenterHorizontally)
+                    .padding(0.dp, 20.dp)
             )
         }
 
@@ -91,9 +79,9 @@ fun HomeScreen(navController: NavHostController, rootNavController: NavHostContr
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                HomeButton(stringResource(R.string.reviews), "review", Icons.Default.Star, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
-                HomeButton(stringResource(R.string.emergency), "emergency", Icons.Default.Warning, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
-                HomeButton(stringResource(R.string.settings), "settings", Icons.Default.Settings, navController = navController, iconColor = MaterialTheme.colorScheme.tertiary)
+                HomeButton(stringResource(R.string.reviews), "review", Icons.Default.Star, navController = navController, iconColor = CroatianBlue)
+                HomeButton(stringResource(R.string.emergency), "emergency", Icons.Default.Warning, navController = navController, iconColor = CroatianBlue)
+                HomeButton(stringResource(R.string.settings), "settings", Icons.Default.Settings, navController = navController, iconColor = CroatianBlue)
             }
         }
     }
@@ -106,7 +94,7 @@ fun HomeButton(
     route: String,
     icon: ImageVector,
     navController: NavHostController,
-    iconColor: Color = MaterialTheme.colorScheme.primary
+    iconColor: Color = CroatianRed
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -122,6 +110,10 @@ fun HomeButton(
             tint = iconColor,
             modifier = Modifier.size(48.dp)
         )
-        Text(text = label)
+        Text(
+            text = label,
+            color = iconColor,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }

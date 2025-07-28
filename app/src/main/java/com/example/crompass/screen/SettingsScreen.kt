@@ -1,5 +1,7 @@
 package com.example.crompass.screen
 
+import android.widget.Toast
+
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -13,18 +15,21 @@ import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
+import com.example.crompass.ui.theme.LocalThemeState
 import com.example.crompass.utils.LocalAppLocale
+import kotlinx.coroutines.delay
 
 @Composable
 fun SettingsScreen(
     navController: NavHostController,
-    globalNavController: NavHostController,
-    onLanguageChange: (String) -> Unit
+    globalNavController: NavHostController
 ) {
+    val appLocale = LocalAppLocale.current
     val user = FirebaseAuth.getInstance().currentUser
     val currentLocale = LocalAppLocale.current
-    var selectedLanguage by remember { mutableStateOf(currentLocale.language) }
+    var selectedLanguage by remember { mutableStateOf(currentLocale.currentLanguageCode) }
     var languageDropdownExpanded by remember { mutableStateOf(false) }
+    val localContext = LocalContext.current
 
     val languages = mapOf(
         "English 🇬🇧" to "en",
@@ -35,7 +40,6 @@ fun SettingsScreen(
         "Hrvatski 🇭🇷" to "hr"
     )
     val systemDefault = stringResource(id = R.string.system_default)
-    var theme by remember { mutableStateOf(systemDefault) }
 
     Column(
         modifier = Modifier
@@ -84,7 +88,7 @@ fun SettingsScreen(
                         onClick = {
                             selectedLanguage = code
                             languageDropdownExpanded = false
-                            onLanguageChange(code)
+                            appLocale.setLocale(code)
                         }
                     )
                 }
@@ -94,22 +98,22 @@ fun SettingsScreen(
         // Theme Selection Section
         Column {
             Text(stringResource(id = R.string.theme), style = MaterialTheme.typography.titleMedium)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                listOf(
-                    stringResource(id = R.string.light),
-                    stringResource(id = R.string.dark),
-                    stringResource(id = R.string.system_default)
-                ).forEach { option ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(end = 16.dp)
-                    ) {
-                        RadioButton(
-                            selected = theme == option,
-                            onClick = { theme = option }
-                        )
-                        Text(option)
-                    }
+            val themeState = LocalThemeState.current
+
+            listOf(
+                stringResource(id = R.string.light) to false,
+                stringResource(id = R.string.dark) to true,
+                stringResource(id = R.string.system_default) to null
+            ).forEach { (label, value) ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(end = 16.dp)
+                ) {
+                    RadioButton(
+                        selected = themeState.isDarkTheme == value,
+                        onClick = { themeState.setDarkTheme(value ?: false) }
+                    )
+                    Text(label)
                 }
             }
         }

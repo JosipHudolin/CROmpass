@@ -57,6 +57,7 @@
     <string name="loading_culture_rules">Kulturregeln werden geladen…</string>
     <string name="back">Zurück</string>
     <string name="select_option">Wählen…</string>
+    <string name="language_changed">Sprache geändert</string>
     <!-- Authentication -->
     <string name="login">Anmelden</string>
     <string name="no_account_register">Noch kein Konto? Registrieren</string>

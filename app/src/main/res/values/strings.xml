@@ -50,6 +50,7 @@
     <string name="fill_all_fields">Ispunite sva polja.</string>
     <string name="age_number_required">Dob mora biti broj.</string>
     <string name="navigate_with_google_maps">Navigiraj putem Google Mapsa</string>
+    <string name="language_changed">Jezik je promijenjen</string>
 
     <!-- Reviews -->
     <string name="leave_review">Ostavi recenziju</string>

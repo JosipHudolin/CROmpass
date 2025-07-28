@@ -55,6 +55,7 @@
     <string name="hospital">Hospital</string>
     <string name="pharmacy">Pharmacy</string>
     <string name="all">All</string>
+    <string name="language_changed">Language changed</string>
     <!-- Validation Messages -->
     <string name="fill_all_fields">Please fill in all fields.</string>
     <string name="age_number_required">Age must be a number.</string>

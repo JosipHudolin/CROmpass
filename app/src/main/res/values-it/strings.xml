@@ -75,6 +75,7 @@
     <string name="road">Strada</string>
     <string name="find_nearby_help">Trova aiuto nelle vicinanze</string>
     <string name="search_for">Cerca</string>
+    <string name="language_changed">Lingua cambiata</string>
     <!-- Theme -->
     <string name="theme">Tema</string>
     <string name="light">Chiaro</string>

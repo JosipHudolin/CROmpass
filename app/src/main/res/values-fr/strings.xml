@@ -58,6 +58,7 @@
     <string name="medical">Médical</string>
     <string name="fire">Feu</string>
     <string name="road">Route</string>
+    <string name="language_changed">Langue changée</string>
     <!-- Authentication -->
     <string name="register">S\'inscrire</string>
     <string name="find_nearby_help">Trouver de l\'aide à proximité</string>

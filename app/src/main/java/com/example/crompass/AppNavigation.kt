@@ -9,7 +9,7 @@ import com.example.crompass.screen.MainScreen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun AppNavigation(navController: NavHostController, onLanguageChange: (String) -> Unit) {
+fun AppNavigation(navController: NavHostController) {
     val isLoggedIn = FirebaseAuth.getInstance().currentUser != null
 
     NavHost(
@@ -17,6 +17,6 @@ fun AppNavigation(navController: NavHostController, onLanguageChange: (String) -
         startDestination = if (isLoggedIn) "main" else "auth"
     ) {
         composable("auth") { AuthScreen(navController) }
-        composable("main") { MainScreen(navController, onLanguageChange) }
+        composable("main") { MainScreen(navController) }
     }
 }

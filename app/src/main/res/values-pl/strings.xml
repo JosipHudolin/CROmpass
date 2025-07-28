@@ -46,6 +46,7 @@
     <string name="unknown">Nieznane</string>
     <string name="no_culture_rules">Brak dostępnych zasad kulturowych.</string>
     <string name="loading_culture_rules">Ładowanie zasad kulturowych…</string>
+    <string name="language_changed">Zmieniono język</string>
     <string name="back">Wstecz</string>
     <!-- Validation Messages -->
     <string name="fill_all_fields">Wypełnij wszystkie pola.</string>
