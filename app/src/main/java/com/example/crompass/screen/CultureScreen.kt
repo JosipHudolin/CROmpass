@@ -21,7 +21,18 @@ import androidx.navigation.NavHostController
 import com.example.crompass.viewmodel.CultureRulesViewModel
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
+import com.example.crompass.ui.theme.CroatianWhite
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
+import com.example.crompass.screen.components.CultureRuleCard
+import com.example.crompass.screen.components.Dropdown
+import com.example.crompass.ui.theme.CroatianBlue
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewModel = viewModel()) {
     val languageCodeToName = mapOf(
@@ -38,109 +49,98 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
     val selectedCategory by viewModel.selectedCategory.observeAsState("All")
     val isLoading by viewModel.isLoading.observeAsState(false)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(top = 32.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            androidx.compose.material3.Icon(
-                imageVector = androidx.compose.material.icons.Icons.Default.ArrowBack,
-                contentDescription = stringResource(R.string.back),
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(28.dp)
-                    .padding(end = 8.dp)
-                    .clickable { navController.popBackStack() }
-            )
-
-            Text(
-                text = stringResource(R.string.cultural_rules),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary
+    Scaffold(
+        modifier = Modifier.background(CroatianWhite).fillMaxSize(),
+        containerColor = CroatianWhite,
+        contentWindowInsets = WindowInsets(0), // ⬅️ uklanja automatski padding
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = CroatianWhite
+                ),
+                title = {
+                    Text(
+                        text = stringResource(R.string.cultural_rules),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = CroatianBlue
+                    )
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back),
+                        tint = CroatianBlue,
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .clickable { navController.popBackStack() }
+                    )
+                },
+                windowInsets = WindowInsets(0)
             )
         }
-
-        Text(
-            text = stringResource(R.string.explore_culture),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        val availableLanguages = listOf("en", "de", "fr", "hr", "it", "pl")
-        val availableCategories = listOf("All") + cultureRules.map { it.category.replace("_", " ").replaceFirstChar { c -> c.uppercase() } }.distinct()
-
-        SimpleDropdown(
-            label = stringResource(R.string.language),
-            options = availableLanguages.map { languageCodeToName[it] ?: it },
-            selectedOption = languageCodeToName[selectedLanguage] ?: selectedLanguage,
-            onOptionSelected = { selectedName ->
-                val selectedCode = languageCodeToName.entries.firstOrNull { it.value == selectedName }?.key ?: "en"
-                viewModel.setSelectedLanguage(selectedCode)
-            }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        SimpleDropdown(
-            label = stringResource(R.string.select_category),
-            options = availableCategories,
-            selectedOption = selectedCategory,
-            onOptionSelected = { viewModel.setSelectedCategory(it) }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (isLoading) {
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(CroatianWhite)
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+        ) {
             Text(
-                text = stringResource(R.string.loading_culture_rules),
+                text = stringResource(R.string.explore_culture),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
+                color = CroatianBlue,
+                modifier = Modifier.padding(bottom = 24.dp)
             )
-        } else if (cultureRules.isEmpty()) {
-            Text(
-                text = stringResource(R.string.no_culture_rules),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
+
+            val availableLanguages = listOf("en", "de", "fr", "hr", "it", "pl")
+            val availableCategories = listOf("All") + cultureRules.map { it.category.replace("_", " ").replaceFirstChar { c -> c.uppercase() } }.distinct()
+
+            Dropdown(
+                label = stringResource(R.string.language),
+                options = availableLanguages.map { languageCodeToName[it] ?: it },
+                selectedOption = languageCodeToName[selectedLanguage] ?: selectedLanguage,
+                onOptionSelected = { selectedName ->
+                    val selectedCode = languageCodeToName.entries.firstOrNull { it.value == selectedName }?.key ?: "en"
+                    viewModel.setSelectedLanguage(selectedCode)
+                }
             )
-        } else {
-            val filteredRules = viewModel.getFilteredCultureRules()
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(filteredRules) { rule ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
-                            Text(
-                                text = rule.category.replace("_", " ").replaceFirstChar { it.uppercase() },
-                                style = MaterialTheme.typography.titleLarge,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-                            rule.translations[selectedLanguage]?.let { translation ->
-                                Text(
-                                    text = translation,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
+            Dropdown(
+                label = stringResource(R.string.select_category),
+                options = availableCategories,
+                selectedOption = selectedCategory,
+                onOptionSelected = { viewModel.setSelectedCategory(it) }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (isLoading) {
+                Text(
+                    text = stringResource(R.string.loading_culture_rules),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            } else if (cultureRules.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.no_culture_rules),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            } else {
+                val filteredRules = viewModel.getFilteredCultureRules()
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(filteredRules) { rule ->
+                        CultureRuleCard(
+                            category = rule.category,
+                            translation = rule.translations[selectedLanguage] ?: ""
+                        )
                     }
                 }
             }

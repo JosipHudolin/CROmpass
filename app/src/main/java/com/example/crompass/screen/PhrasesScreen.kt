@@ -16,11 +16,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.crompass.viewmodel.PhraseViewModel
 import android.speech.tts.TextToSpeech
+import androidx.compose.foundation.background
 import androidx.compose.runtime.livedata.observeAsState
 import java.util.Locale
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
+import com.example.crompass.screen.components.PhraseCard
+import com.example.crompass.ui.theme.CroatianBlue
+import com.example.crompass.ui.theme.CroatianWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,14 +64,22 @@ fun PhrasesScreen(navController: NavHostController) {
     }
 
     Scaffold(
+        modifier = Modifier.background(CroatianWhite).fillMaxSize(),
+        containerColor = CroatianWhite,
+        contentWindowInsets = WindowInsets(0), // ⬅️ uklanja automatski padding
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.common_phrases)) },
+                windowInsets = WindowInsets(0), // ⬅️ ovo makne status bar padding
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = CroatianWhite
+                ),
+                title = { Text(stringResource(R.string.common_phrases), color = CroatianBlue) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back), tint = CroatianBlue)
                     }
                 }
+
             )
         }
     ) { innerPadding ->
@@ -75,7 +87,7 @@ fun PhrasesScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
+                .background(CroatianWhite)
         ) {
             when {
                 isLoading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
@@ -86,33 +98,17 @@ fun PhrasesScreen(navController: NavHostController) {
                 )
                 else -> LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(). background(CroatianWhite)
                 ) {
                     items(phrases) { phrase ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    val phraseText = phrase.phrases["hr"] ?: context.getString(R.string.unknown_hr)
-                                    speak(phraseText)  // Speak in Croatian
-                                },
-                            shape = MaterialTheme.shapes.medium
-                        ) {
-                            Column(Modifier.padding(16.dp)) {
-                                val phraseText = phrase.phrases[userLanguage] ?: phrase.phrases["hr"] ?: stringResource(R.string.unknown)
-                                Text(
-                                    text = phraseText,
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                Spacer(Modifier.height(4.dp))
+                        val phraseText = phrase.phrases[userLanguage] ?: phrase.phrases["hr"] ?: stringResource(R.string.unknown)
+                        val croatianText = phrase.phrases["hr"] ?: stringResource(R.string.unknown_hr)
 
-                                // Always show Croatian translation
-                                Text(
-                                    text = "➡️ ${phrase.phrases["hr"] ?: stringResource(R.string.unknown_hr)}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
+                        PhraseCard(
+                            phraseText = phraseText,
+                            translation = croatianText,
+                            onClick = { speak(croatianText) }
+                        )
                     }
                 }
             }
