@@ -1,6 +1,7 @@
 package com.example.crompass.screen.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
-import com.example.crompass.ui.theme.CroatianWhite
 
 @Composable
 fun HomeScreenButton(
@@ -32,7 +32,12 @@ fun HomeScreenButton(
         modifier = modifier
             .padding(8.dp)
             .shadow(4.dp, RoundedCornerShape(16.dp))
-            .background(CroatianWhite, RoundedCornerShape(16.dp))
+            .border(
+                width = 2.dp,
+                color = Color.White,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
             .clickable { navController.navigate(route) }
             .size(100.dp)
     ) {

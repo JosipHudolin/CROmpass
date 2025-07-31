@@ -10,14 +10,13 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import com.example.crompass.ui.theme.CroatianRed
-import com.example.crompass.ui.theme.CroatianWhite
 
 @Composable
 fun Dropdown(
@@ -34,10 +33,10 @@ fun Dropdown(
             .padding(vertical = 8.dp)
             .border(
                 width = 1.dp,
-                color = CroatianRed,
+                color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(12.dp)
             )
-            .background(CroatianRed, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
             .clickable { expanded = true }
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
@@ -46,16 +45,15 @@ fun Dropdown(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = selectedOption.ifEmpty { label }, color = CroatianWhite)
-            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null, tint = CroatianWhite)
+            Text(text = selectedOption.ifEmpty { label }, color = MaterialTheme.colorScheme.onPrimary)
+            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
         }
 
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .background(CroatianWhite, shape = RoundedCornerShape(1.dp))
-                .shadow(elevation = 1.dp, shape = RoundedCornerShape(1.dp))
+                .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
@@ -64,7 +62,7 @@ fun Dropdown(
                         expanded = false
                     },
                     text = {
-                        Text(text = option, color = CroatianRed)
+                        Text(text = option, color = MaterialTheme.colorScheme.onSurface)
                     }
                 )
             }

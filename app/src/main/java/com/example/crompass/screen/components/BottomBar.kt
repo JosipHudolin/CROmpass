@@ -26,7 +26,7 @@ import com.example.crompass.ui.theme.CroatianWhite
 
 @Composable
 fun CROmpassBottomBar(navController: NavHostController, currentRoute: String) {
-    NavigationBar(containerColor = CroatianRed) {
+    NavigationBar(containerColor = MaterialTheme.colorScheme.primary) {
         NavigationBarItem(
             selected = currentRoute == "home",
             onClick = { navController.navigate("home") },
@@ -45,11 +45,11 @@ fun CROmpassBottomBar(navController: NavHostController, currentRoute: String) {
             },
             alwaysShowLabel = true,
             colors = NavigationBarItemDefaults.colors(
-                indicatorColor = CroatianWhite, // mala pozadina kad je selected
+                indicatorColor = MaterialTheme.colorScheme.surface, // mala pozadina kad je selected
                 selectedIconColor = CroatianGold,
-                unselectedIconColor = CroatianWhite,
+                unselectedIconColor = MaterialTheme.colorScheme.surface,
                 selectedTextColor = CroatianGold,
-                unselectedTextColor = CroatianWhite
+                unselectedTextColor = MaterialTheme.colorScheme.surface
             )
         )
         NavigationBarItem(
@@ -70,11 +70,11 @@ fun CROmpassBottomBar(navController: NavHostController, currentRoute: String) {
             },
             alwaysShowLabel = true,
             colors = NavigationBarItemDefaults.colors(
-                indicatorColor = CroatianWhite, // mala pozadina kad je selected
+                indicatorColor = MaterialTheme.colorScheme.surface, // mala pozadina kad je selected
                 selectedIconColor = CroatianGold,
-                unselectedIconColor = CroatianWhite,
+                unselectedIconColor = MaterialTheme.colorScheme.surface,
                 selectedTextColor = CroatianGold,
-                unselectedTextColor = CroatianWhite
+                unselectedTextColor = MaterialTheme.colorScheme.surface
             )
         )
         NavigationBarItem(
@@ -95,11 +95,11 @@ fun CROmpassBottomBar(navController: NavHostController, currentRoute: String) {
             },
             alwaysShowLabel = true,
             colors = NavigationBarItemDefaults.colors(
-                indicatorColor = CroatianWhite, // mala pozadina kad je selected
+                indicatorColor = MaterialTheme.colorScheme.surface, // mala pozadina kad je selected
                 selectedIconColor = CroatianGold,
-                unselectedIconColor = CroatianWhite,
+                unselectedIconColor = MaterialTheme.colorScheme.surface,
                 selectedTextColor = CroatianGold,
-                unselectedTextColor = CroatianWhite
+                unselectedTextColor = MaterialTheme.colorScheme.surface
             )
         )
     }

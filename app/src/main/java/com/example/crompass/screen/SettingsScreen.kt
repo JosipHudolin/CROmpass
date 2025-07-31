@@ -1,7 +1,5 @@
 package com.example.crompass.screen
 
-import android.widget.Toast
-
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -17,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
 import com.example.crompass.ui.theme.LocalThemeState
 import com.example.crompass.utils.LocalAppLocale
-import kotlinx.coroutines.delay
 
 @Composable
 fun SettingsScreen(
@@ -29,7 +26,6 @@ fun SettingsScreen(
     val currentLocale = LocalAppLocale.current
     var selectedLanguage by remember { mutableStateOf(currentLocale.currentLanguageCode) }
     var languageDropdownExpanded by remember { mutableStateOf(false) }
-    val localContext = LocalContext.current
 
     val languages = mapOf(
         "English 🇬🇧" to "en",
@@ -39,7 +35,6 @@ fun SettingsScreen(
         "Polski 🇵🇱" to "pl",
         "Hrvatski 🇭🇷" to "hr"
     )
-    val systemDefault = stringResource(id = R.string.system_default)
 
     Column(
         modifier = Modifier
@@ -100,20 +95,38 @@ fun SettingsScreen(
             Text(stringResource(id = R.string.theme), style = MaterialTheme.typography.titleMedium)
             val themeState = LocalThemeState.current
 
-            listOf(
-                stringResource(id = R.string.light) to false,
-                stringResource(id = R.string.dark) to true,
-                stringResource(id = R.string.system_default) to null
-            ).forEach { (label, value) ->
+            val themeOptions = listOf(
+                    Triple(R.string.light, false, false),
+                    Triple(R.string.dark, true, false),
+                    Triple(R.string.system_default, false, true)
+            )
+
+            themeOptions.forEach { (labelRes, darkValue, isSystem) ->
+                val label = stringResource(id = labelRes)
+
+                val isSelected = when {
+                    isSystem -> themeState.useSystemTheme
+                    darkValue -> !themeState.useSystemTheme && themeState.isDarkTheme
+                    else -> !themeState.useSystemTheme && !themeState.isDarkTheme
+                }
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(end = 16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
                 ) {
                     RadioButton(
-                        selected = themeState.isDarkTheme == value,
-                        onClick = { themeState.setDarkTheme(value ?: false) }
+                        selected = isSelected,
+                        onClick = {
+                            themeState.setUseSystemTheme(isSystem)
+                            if (!isSystem) themeState.setDarkTheme(darkValue)
+                        }
                     )
-                    Text(label)
+                    Text(
+                        text = label,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
                 }
             }
         }

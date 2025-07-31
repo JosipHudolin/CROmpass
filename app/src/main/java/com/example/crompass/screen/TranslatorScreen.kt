@@ -1,15 +1,18 @@
 package com.example.crompass.screen
 
 import android.speech.tts.TextToSpeech
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -18,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.example.crompass.R
 import com.example.crompass.viewmodel.TranslatorViewModel
 import com.example.crompass.model.TranslationResult
+import com.example.crompass.screen.components.Dropdown
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,30 +57,58 @@ fun TranslatorScreen(navController: NavHostController, viewModel: TranslatorView
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.translate)) },
+                title = {
+                    Text(
+                        stringResource(R.string.translate),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                        Icon(
+                            Icons.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(innerPadding)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            OutlinedTextField(
+            TextField(
                 value = inputText,
                 onValueChange = { inputText = it },
-                label = { Text(stringResource(R.string.search_for)) },
-                modifier = Modifier.fillMaxWidth()
+                label = {
+                    Text(
+                        stringResource(R.string.search_for),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                )
             )
 
-            SimpleDropdown(
+            Dropdown(
                 label = stringResource(R.string.target_langugage),
                 options = languageNames.values.toList(),
                 selectedOption = languageNames[selectedLanguage] ?: "English",
@@ -87,36 +119,93 @@ fun TranslatorScreen(navController: NavHostController, viewModel: TranslatorView
 
             Button(
                 onClick = { viewModel.translateText(inputText, selectedLanguage) },
-                enabled = inputText.isNotBlank()
+                enabled = inputText.isNotBlank(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             ) {
-                Text(stringResource(R.string.translation))
+                Text(
+                    stringResource(R.string.translation),
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
 
             if (isLoading) {
-                CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
 
             translationResult?.let {
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Translated: ${it.translatedText}")
-                Button(onClick = {
-                    tts?.language = Locale(selectedLanguage)
-                    tts?.speak(it.translatedText, TextToSpeech.QUEUE_FLUSH, null, null)
-                }) {
-                    Text(stringResource(R.string.speak))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .padding(16.dp)
+                ) {
+                    Column {
+                        Text(
+                            text = "Translated: ${it.translatedText}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = {
+                                tts?.language = Locale(selectedLanguage)
+                                tts?.speak(it.translatedText, TextToSpeech.QUEUE_FLUSH, null, null)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ) {
+                            Text(
+                                stringResource(R.string.speak),
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                    }
                 }
             }
 
             if (recentTranslations.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(stringResource(R.string.recent_translation), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.recent_translation),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
                 LazyColumn {
                     items(recentTranslations) { item ->
-                        Text(
-                            text = "${item.originalText} → ${item.translatedText} (${item.targetLanguageCode})",
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
+                        ElevatedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            colors = CardDefaults.elevatedCardColors(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = item.originalText,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "→ ${item.translatedText} (${item.targetLanguageCode})",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
                     }
                 }
             }

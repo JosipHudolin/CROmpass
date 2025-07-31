@@ -1,5 +1,6 @@
 package com.example.crompass.screen
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,8 +21,11 @@ import com.example.crompass.viewmodel.UserViewModel
 import androidx.core.net.toUri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Emergency
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
+import com.example.crompass.ui.theme.CroatianWhite
+import com.example.crompass.utils.LocalAppLocale
 
 @Composable
 fun EmergencyScreen(
@@ -32,13 +36,7 @@ fun EmergencyScreen(
     val context = LocalContext.current
     val contacts by viewModel.contacts.collectAsState()
     val tips by viewModel.tips.collectAsState()
-    var language: String? by remember { mutableStateOf("en") }
-
-    LaunchedEffect(Unit) {
-        userViewModel.getUserLanguage { lang ->
-            language = lang
-        }
-    }
+    val language = LocalAppLocale.current.currentLanguageCode
 
     var selectedCategory by remember { mutableStateOf("All") }
     val categories = listOf("All") + tips.map { it.category }.distinct()
@@ -87,7 +85,10 @@ fun EmergencyScreen(
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
-                            Text(text = contact.name, style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                text = contact.translatedNames[language] ?: contact.name,
+                                style = MaterialTheme.typography.titleMedium
+                            )
                             Text(text = contact.number, style = MaterialTheme.typography.bodyMedium)
                         }
                     }
@@ -199,7 +200,12 @@ fun EmergencyScreen(
                 .padding(bottom = 24.dp, end = 16.dp)
                 .size(64.dp)
         ) {
-            Text(stringResource(R.string.general_emergency), style = MaterialTheme.typography.titleMedium)
+            Icon(
+                imageVector = Icons.Filled.Emergency,
+                contentDescription = null,
+                tint = CroatianWhite,
+                modifier = Modifier.size(36.dp)
+            )
         }
     }
 }

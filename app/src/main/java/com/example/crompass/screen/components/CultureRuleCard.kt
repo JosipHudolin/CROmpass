@@ -11,8 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.crompass.ui.theme.CroatianBlue
-import com.example.crompass.ui.theme.CroatianWhite
 
 @Composable
 fun CultureRuleCard(
@@ -23,20 +21,20 @@ fun CultureRuleCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CroatianWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
             Text(
                 text = category.replace("_", " ").replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.titleLarge,
-                color = CroatianBlue,
+                color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
                 text = translation,
                 style = MaterialTheme.typography.bodyLarge,
-                color = CroatianBlue
+                color = MaterialTheme.colorScheme.secondary
             )
         }
     }

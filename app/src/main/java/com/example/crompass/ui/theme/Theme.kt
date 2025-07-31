@@ -7,25 +7,17 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import com.example.crompass.R
 
-data class ThemeState(
-    val isDarkTheme: Boolean,
-    val setDarkTheme: (Boolean) -> Unit
-)
-
-val LocalThemeState = compositionLocalOf<ThemeState> {
-    error("No ThemeState provided")
+enum class ThemeMode {
+    LIGHT, DARK, SYSTEM
 }
 
 val Rubik = FontFamily(
@@ -54,35 +46,34 @@ val AppTypography = Typography(
 
 @Composable
 fun CROmpassTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val darkThemeState = remember { mutableStateOf(useDarkTheme) }
+    val context = LocalContext.current
 
-    val themeState = remember {
-        ThemeState(
-            isDarkTheme = darkThemeState.value,
-            setDarkTheme = { darkThemeState.value = it }
-        )
+    val isDarkTheme = when (themeMode) {
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
     }
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkThemeState.value) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (isDarkTheme) dynamicDarkColorScheme(context)
+            else dynamicLightColorScheme(context)
         }
-
-        darkThemeState.value -> DarkColorScheme
+        isDarkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 
-    CompositionLocalProvider(LocalThemeState provides themeState) {
-        MaterialTheme(
-            colorScheme = colorScheme,
-            typography = AppTypography,
-            content = content
-        )
-    }
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = AppTypography,
+        content = content
+    )
+}
+
+val LocalThemeState = compositionLocalOf<ThemeState> {
+    error("No ThemeState provided")
 }

@@ -14,8 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.crompass.ui.theme.CroatianBlue
-import com.example.crompass.ui.theme.CroatianWhite
 
 @Composable
 fun PhraseCard(
@@ -29,20 +27,20 @@ fun PhraseCard(
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = CroatianWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
     ) {
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
             Text(
                 text = phraseText,
                 style = MaterialTheme.typography.titleLarge,
-                color = CroatianBlue,
+                color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 text = "➡️ $translation",
                 style = MaterialTheme.typography.bodyLarge,
-                color = CroatianBlue
+                color = MaterialTheme.colorScheme.secondary
             )
         }
     }

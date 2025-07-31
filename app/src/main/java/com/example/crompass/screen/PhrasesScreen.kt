@@ -23,8 +23,6 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
 import com.example.crompass.screen.components.PhraseCard
-import com.example.crompass.ui.theme.CroatianBlue
-import com.example.crompass.ui.theme.CroatianWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,19 +62,19 @@ fun PhrasesScreen(navController: NavHostController) {
     }
 
     Scaffold(
-        modifier = Modifier.background(CroatianWhite).fillMaxSize(),
-        containerColor = CroatianWhite,
+        modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0), // ⬅️ uklanja automatski padding
         topBar = {
             TopAppBar(
                 windowInsets = WindowInsets(0), // ⬅️ ovo makne status bar padding
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CroatianWhite
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
-                title = { Text(stringResource(R.string.common_phrases), color = CroatianBlue) },
+                title = { Text(stringResource(R.string.common_phrases), color = MaterialTheme.colorScheme.secondary) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back), tint = CroatianBlue)
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back), tint = MaterialTheme.colorScheme.onSurface)
                     }
                 }
 
@@ -87,7 +85,7 @@ fun PhrasesScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(CroatianWhite)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             when {
                 isLoading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
@@ -98,7 +96,7 @@ fun PhrasesScreen(navController: NavHostController) {
                 )
                 else -> LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize(). background(CroatianWhite)
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
                 ) {
                     items(phrases) { phrase ->
                         val phraseText = phrase.phrases[userLanguage] ?: phrase.phrases["hr"] ?: stringResource(R.string.unknown)

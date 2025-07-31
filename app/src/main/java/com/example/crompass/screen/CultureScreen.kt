@@ -2,11 +2,8 @@ package com.example.crompass.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.filled.ArrowBack
@@ -21,7 +18,6 @@ import androidx.navigation.NavHostController
 import com.example.crompass.viewmodel.CultureRulesViewModel
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
-import com.example.crompass.ui.theme.CroatianWhite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
@@ -30,7 +26,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
 import com.example.crompass.screen.components.CultureRuleCard
 import com.example.crompass.screen.components.Dropdown
-import com.example.crompass.ui.theme.CroatianBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,26 +45,26 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
     val isLoading by viewModel.isLoading.observeAsState(false)
 
     Scaffold(
-        modifier = Modifier.background(CroatianWhite).fillMaxSize(),
-        containerColor = CroatianWhite,
+        modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0), // ⬅️ uklanja automatski padding
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CroatianWhite
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
                 title = {
                     Text(
                         text = stringResource(R.string.cultural_rules),
                         style = MaterialTheme.typography.headlineSmall,
-                        color = CroatianBlue
+                        color = MaterialTheme.colorScheme.primary
                     )
                 },
                 navigationIcon = {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back),
-                        tint = CroatianBlue,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .clickable { navController.popBackStack() }
@@ -82,14 +77,14 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(CroatianWhite)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 16.dp)
         ) {
             Text(
                 text = stringResource(R.string.explore_culture),
                 style = MaterialTheme.typography.bodyLarge,
-                color = CroatianBlue,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
