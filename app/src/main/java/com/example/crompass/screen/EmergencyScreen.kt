@@ -24,14 +24,16 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Emergency
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
+import com.example.crompass.screen.components.EmergencyTipCard
+import com.example.crompass.ui.theme.CroatianRed
 import com.example.crompass.ui.theme.CroatianWhite
 import com.example.crompass.utils.LocalAppLocale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmergencyScreen(
     navController: NavHostController,
     viewModel: EmergencyViewModel = viewModel(),
-    userViewModel: UserViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val contacts by viewModel.contacts.collectAsState()
@@ -46,34 +48,63 @@ fun EmergencyScreen(
         viewModel.getEmergencyData()
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+    Scaffold(
+        contentWindowInsets = WindowInsets(0), // ⬅️ uklanja automatski padding
+        topBar = {
+            TopAppBar(
+                windowInsets = WindowInsets(0),
+                title = {
+                    Text(
+                        text = stringResource(R.string.emergency_contacts),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.back),
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    val intent = android.content.Intent(android.content.Intent.ACTION_DIAL).apply {
+                        data = "tel:112".toUri()
+                    }
+                    context.startActivity(intent)
+                },
+                containerColor = CroatianRed,
+                contentColor = CroatianWhite,
+                shape = CircleShape,
+                modifier = Modifier
+                    .padding(bottom = 24.dp, end = 16.dp)
+                    .size(64.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Emergency,
+                    contentDescription = null,
+                    tint = CroatianWhite,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+                .padding(innerPadding)
         ) {
-            IconButton(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.back),
-                    tint = Color.White
-                )
-            }
-
-            Text(
-                text = stringResource(R.string.emergency_contacts),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 8.dp),
-                color = Color.White
-            )
 
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(contacts) { contact ->
@@ -81,7 +112,7 @@ fun EmergencyScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
@@ -128,25 +159,10 @@ fun EmergencyScreen(
                 }
 
                 items(filteredTips) { tip ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                        elevation = CardDefaults.cardElevation(2.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(
-                                text = tip.category.uppercase(),
-                                style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = tip.translations.getOrElse(language ?: "en") { stringResource(R.string.unknown) },
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
+                    EmergencyTipCard(
+                        category = tip.category,
+                        description = tip.translations.getOrElse(language ?: "en") { stringResource(R.string.unknown) }
+                    )
                 }
 
                 item {
@@ -185,27 +201,5 @@ fun EmergencyScreen(
             }
         }
 
-        FloatingActionButton(
-            onClick = {
-                val intent = android.content.Intent(android.content.Intent.ACTION_DIAL).apply {
-                    data = "tel:112".toUri()
-                }
-                context.startActivity(intent)
-            },
-            containerColor = Color.Red,
-            contentColor = Color.White,
-            shape = CircleShape,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 24.dp, end = 16.dp)
-                .size(64.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Emergency,
-                contentDescription = null,
-                tint = CroatianWhite,
-                modifier = Modifier.size(36.dp)
-            )
-        }
     }
 }

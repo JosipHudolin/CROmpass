@@ -7,6 +7,9 @@
     <!-- Cultural Rules -->
     <string name="phrases">Phrases</string>
     <string name="culture">Culture</string>
+    <string name="dining_etiquette">Dining Etiquette</string>
+    <string name="meeting_people">Meeting People</string>
+    <string name="greetings_and_formalities">Greetings and Formalities</string>
     <!-- Translation and Language -->
     <string name="translate">Translate</string>
     <!-- Reviews -->
@@ -36,6 +39,8 @@
     <string name="fire_department">Fire department</string>
     <string name="police">Police</string>
     <string name="emergency_tips">Emergency tips</string>
+    <string name="history">History</string>
+    <string name="nature">Nature</string>
     <!-- Map and Navigation -->
     <string name="navigate_with_google_maps">Navigate with Google Maps</string>
     <string name="leave_review">Leave a review</string>

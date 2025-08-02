@@ -58,12 +58,16 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.my_profile)) },
+                windowInsets = WindowInsets(0),
+                title = { Text(text = stringResource(R.string.my_profile), color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = MaterialTheme.colorScheme.onPrimary)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                )
             )
         }
     ) { padding ->
@@ -101,6 +105,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                         ).forEach { (label, value) ->
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                                 shape = RoundedCornerShape(12.dp),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                             ) {
@@ -148,13 +153,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                     println(message)
                                 }
                             )
-                        }
-
-                        Button(
-                            onClick = { logout(navController) },
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        ) {
-                            Text(stringResource(R.string.logout))
                         }
                     }
                 }

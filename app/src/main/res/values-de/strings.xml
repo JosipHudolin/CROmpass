@@ -10,6 +10,9 @@
     <string name="common_phrases">Gebräuchliche Redewendungen</string>
     <string name="cultural_rules">Kulturelle Regeln</string>
     <string name="explore_culture">Entdecke Etikette und Verhaltensregeln</string>
+    <string name="dining_etiquette">Esskultur</string>
+    <string name="meeting_people">Leute kennenlernen</string>
+    <string name="greetings_and_formalities">Begrüßungen und Formalitäten</string>
     <!-- Translation and Language -->
     <string name="translate">Übersetzen</string>
     <string name="target_langugage">Zielsprache</string>
@@ -30,6 +33,8 @@
     <string name="leave_review_for">Bewertung für %1$s abgeben</string>
     <string name="your_review">Deine Bewertung</string>
     <string name="public_review">Öffentliche Bewertung</string>
+    <string name="history">Geschichte</string>
+    <string name="nature">Natur</string>
     <!-- Emergency Services -->
     <string name="emergency">Notfall</string>
     <string name="emergency_contacts">Notfallkontakte</string>

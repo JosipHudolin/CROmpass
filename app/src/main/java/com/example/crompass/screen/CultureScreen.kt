@@ -31,12 +31,12 @@ import com.example.crompass.screen.components.Dropdown
 @Composable
 fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewModel = viewModel()) {
     val languageCodeToName = mapOf(
-        "en" to "English",
-        "de" to "German",
-        "fr" to "French",
-        "hr" to "Croatian",
-        "it" to "Italian",
-        "pl" to "Polish"
+        "en" to stringResource(R.string.english),
+        "de" to stringResource(R.string.german),
+        "fr" to stringResource(R.string.french),
+        "hr" to stringResource(R.string.croatian),
+        "it" to stringResource(R.string.italian),
+        "pl" to stringResource(R.string.polish),
     )
     val cultureRules = viewModel.cultureRules
     val userLanguage by viewModel.userLanguage.observeAsState("en")
@@ -51,20 +51,19 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = MaterialTheme.colorScheme.primary
                 ),
                 title = {
                     Text(
                         text = stringResource(R.string.cultural_rules),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
                 navigationIcon = {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .clickable { navController.popBackStack() }

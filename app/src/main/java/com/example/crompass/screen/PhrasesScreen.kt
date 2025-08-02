@@ -69,12 +69,12 @@ fun PhrasesScreen(navController: NavHostController) {
             TopAppBar(
                 windowInsets = WindowInsets(0), // ⬅️ ovo makne status bar padding
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = MaterialTheme.colorScheme.primary
                 ),
-                title = { Text(stringResource(R.string.common_phrases), color = MaterialTheme.colorScheme.secondary) },
+                title = { Text(stringResource(R.string.common_phrases), color = MaterialTheme.colorScheme.onPrimary) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back), tint = MaterialTheme.colorScheme.onSurface)
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back), tint = MaterialTheme.colorScheme.onPrimary)
                     }
                 }
 

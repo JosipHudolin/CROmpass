@@ -6,10 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.crompass.ui.theme.CROmpassTheme
 import android.Manifest
+import android.view.View
+import android.app.Activity
 import android.content.pm.PackageManager
-import android.os.Build
+import android.view.WindowManager
 import android.widget.Toast
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.core.app.ActivityCompat
@@ -22,6 +23,7 @@ import com.example.crompass.utils.LocaleHelper
 import java.util.Locale
 import com.example.crompass.ui.theme.ThemeMode
 import androidx.core.content.edit
+import com.example.crompass.ui.theme.CroatianRed
 import com.example.crompass.ui.theme.LocalThemeState
 import com.example.crompass.ui.theme.ThemeState
 

@@ -9,6 +9,9 @@
     <string name="culture">Cultura</string>
     <!-- Cultural Rules -->
     <string name="translate">Traduci</string>
+    <string name="dining_etiquette">Etichetta a tavola</string>
+    <string name="meeting_people">Incontrare persone</string>
+    <string name="greetings_and_formalities">Saluti e formalità</string>
     <!-- Translation and Language -->
     <string name="reviews">Recensioni</string>
     <!-- Reviews -->
@@ -38,6 +41,8 @@
     <string name="all">Tutti</string>
     <string name="medical">Medico</string>
     <string name="fire">Incendio</string>
+    <string name="history">Storia</string>
+    <string name="nature">Natura</string>
     <!-- Validation Messages -->
     <string name="fill_all_fields">Compila tutti i campi.</string>
     <string name="age_number_required">L\'età deve essere un numero.</string>

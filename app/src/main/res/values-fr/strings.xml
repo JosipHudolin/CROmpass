@@ -7,11 +7,16 @@
     <!-- Cultural Rules -->
     <string name="phrases">Phrases</string>
     <string name="culture">Culture</string>
+    <string name="dining_etiquette">Étiquette à table</string>
+    <string name="meeting_people">Rencontrer des gens</string>
+    <string name="greetings_and_formalities">Salutations et formalités</string>
     <!-- Translation and Language -->
     <string name="translate">Traduire</string>
     <!-- Reviews -->
     <string name="reviews">Avis</string>
     <!-- Emergency Services -->
+    <string name="history">Histoire</string>
+    <string name="nature">Nature</string>
     <string name="emergency">Urgence</string>
     <string name="common_phrases">Phrases courantes</string>
     <string name="cultural_rules">Règles culturelles</string>

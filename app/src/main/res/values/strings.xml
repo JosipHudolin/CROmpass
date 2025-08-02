@@ -15,6 +15,9 @@
     <!-- Cultural Rules -->
     <string name="cultural_rules">Kulturna pravila</string>
     <string name="explore_culture">Istraži kulturni bonton i pravila ponašanja</string>
+    <string name="dining_etiquette">Kultura objedovanja</string>
+    <string name="meeting_people">Upoznavanje ljudi</string>
+    <string name="greetings_and_formalities">Pozdravi i formalnosti</string>
 
     <!-- Translation and Language -->
     <string name="target_langugage">Ciljani jezik</string>
@@ -24,6 +27,8 @@
     <string name="language">Jezik</string>
     <string name="english">Engleski</string>
     <string name="filter_by_destination">Filtriraj prema destinaciji</string>
+    <string name="history">Povijest</string>
+    <string name="nature">Priroda</string>
 
     <!-- Reviews -->
     <string name="my_private_reviews">Moje privatne recenzije</string>

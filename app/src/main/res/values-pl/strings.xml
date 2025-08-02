@@ -7,6 +7,9 @@
     <!-- Cultural Rules -->
     <string name="phrases">Zwroty</string>
     <string name="culture">Kultura</string>
+    <string name="dining_etiquette">Etykieta przy stole</string>
+    <string name="meeting_people">Poznawanie ludzi</string>
+    <string name="greetings_and_formalities">Powitania i formalności</string>
     <!-- Translation and Language -->
     <string name="translate">Tłumacz</string>
     <!-- Reviews -->
@@ -39,6 +42,8 @@
     <string name="fire">Pożar</string>
     <string name="road">Droga</string>
     <string name="find_nearby_help">Znajdź pomoc w pobliżu</string>
+    <string name="history">Historia</string>
+    <string name="nature">Natura</string>
     <!-- General Messages -->
     <string name="search_for">Szukaj</string>
     <string name="unknown_error">Nieznany błąd</string>

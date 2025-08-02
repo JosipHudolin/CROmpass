@@ -16,6 +16,7 @@ import com.example.crompass.R
 import com.example.crompass.ui.theme.LocalThemeState
 import com.example.crompass.utils.LocalAppLocale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navController: NavHostController,
@@ -36,117 +37,129 @@ fun SettingsScreen(
         "Hrvatski 🇭🇷" to "hr"
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+    Scaffold(
+        contentWindowInsets = WindowInsets(0), // ⬅️ uklanja automatski padding
+        topBar = {
+            TopAppBar(
+                windowInsets = WindowInsets(0),
+                title = { Text(text = stringResource(id = R.string.settings), color = MaterialTheme.colorScheme.onPrimary) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
-            }
-            Text(stringResource(id = R.string.settings), style = MaterialTheme.typography.headlineSmall)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        // Language Section
-        Column {
-            Text(stringResource(id = R.string.language), style = MaterialTheme.typography.titleMedium)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Text(
-                    text = languages.entries.find { it.value == selectedLanguage }?.key ?: "English 🇬🇧",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Button(onClick = { languageDropdownExpanded = true }) {
-                    Text(stringResource(id = R.string.change_language))
-                }
-            }
-            DropdownMenu(
-                expanded = languageDropdownExpanded,
-                onDismissRequest = { languageDropdownExpanded = false }
-            ) {
-                languages.forEach { (label, code) ->
-                    DropdownMenuItem(
-                        text = { Text(label) },
-                        onClick = {
-                            selectedLanguage = code
-                            languageDropdownExpanded = false
-                            appLocale.setLocale(code)
-                        }
-                    )
-                }
-            }
-        }
-
-        // Theme Selection Section
-        Column {
-            Text(stringResource(id = R.string.theme), style = MaterialTheme.typography.titleMedium)
-            val themeState = LocalThemeState.current
-
-            val themeOptions = listOf(
-                    Triple(R.string.light, false, false),
-                    Triple(R.string.dark, true, false),
-                    Triple(R.string.system_default, false, true)
             )
-
-            themeOptions.forEach { (labelRes, darkValue, isSystem) ->
-                val label = stringResource(id = labelRes)
-
-                val isSelected = when {
-                    isSystem -> themeState.useSystemTheme
-                    darkValue -> !themeState.useSystemTheme && themeState.isDarkTheme
-                    else -> !themeState.useSystemTheme && !themeState.isDarkTheme
-                }
-
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            // Language Section
+            Column {
+                Text(stringResource(id = R.string.language), style = MaterialTheme.typography.titleMedium)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
+                        .padding(vertical = 8.dp)
                 ) {
-                    RadioButton(
-                        selected = isSelected,
-                        onClick = {
-                            themeState.setUseSystemTheme(isSystem)
-                            if (!isSystem) themeState.setDarkTheme(darkValue)
-                        }
-                    )
                     Text(
-                        text = label,
-                        modifier = Modifier.padding(start = 8.dp)
+                        text = languages.entries.find { it.value == selectedLanguage }?.key ?: "English 🇬🇧",
+                        style = MaterialTheme.typography.bodyMedium
                     )
+                    Button(onClick = { languageDropdownExpanded = true }) {
+                        Text(stringResource(id = R.string.change_language))
+                    }
+                }
+                DropdownMenu(
+                    expanded = languageDropdownExpanded,
+                    onDismissRequest = { languageDropdownExpanded = false }
+                ) {
+                    languages.forEach { (label, code) ->
+                        DropdownMenuItem(
+                            text = { Text(label) },
+                            onClick = {
+                                selectedLanguage = code
+                                languageDropdownExpanded = false
+                                appLocale.setLocale(code)
+                            }
+                        )
+                    }
                 }
             }
-        }
 
-        // User Info Display
-        Column {
-            Text(stringResource(id = R.string.user), style = MaterialTheme.typography.titleMedium)
-            Text(user?.email ?: "Not logged in", style = MaterialTheme.typography.bodyMedium)
-        }
+            // Theme Selection Section
+            Column {
+                Text(stringResource(id = R.string.theme), style = MaterialTheme.typography.titleMedium)
+                val themeState = LocalThemeState.current
 
-        // Logout Button
-        Button(
-            onClick = {
-                FirebaseAuth.getInstance().signOut()
-                globalNavController.navigate("auth") {
-                    popUpTo(0) { inclusive = true }
+                val themeOptions = listOf(
+                        Triple(R.string.light, false, false),
+                        Triple(R.string.dark, true, false),
+                        Triple(R.string.system_default, false, true)
+                )
+
+                val selectedTheme = when {
+                    themeState.useSystemTheme -> R.string.system_default
+                    themeState.isDarkTheme -> R.string.dark
+                    else -> R.string.light
+                }
+
+                themeOptions.forEach { (labelRes, darkValue, isSystem) ->
+                    val label = stringResource(id = labelRes)
+
+                    val isSelected = labelRes == selectedTheme
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        RadioButton(
+                            selected = isSelected,
+                            onClick = {
+                                themeState.setUseSystemTheme(isSystem)
+                                if (!isSystem) themeState.setDarkTheme(darkValue)
+                            }
+                        )
+                        Text(
+                            text = label,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
                 }
             }
-        ) {
-            Text(stringResource(id = R.string.logout))
+
+            // User Info Display
+            Column {
+                Text(stringResource(id = R.string.user), style = MaterialTheme.typography.titleMedium)
+                Text(user?.email ?: "Not logged in", style = MaterialTheme.typography.bodyMedium)
+            }
+
+            // Logout Button
+            Button(
+                onClick = {
+                    FirebaseAuth.getInstance().signOut()
+                    globalNavController.navigate("auth") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            ) {
+                Text(stringResource(id = R.string.logout))
+            }
         }
     }
 }

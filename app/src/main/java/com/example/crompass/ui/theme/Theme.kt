@@ -67,6 +67,7 @@ fun CROmpassTheme(
         else -> LightColorScheme
     }
 
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = AppTypography,
