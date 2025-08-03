@@ -56,6 +56,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import com.example.crompass.screen.components.Dropdown
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,16 +96,20 @@ fun DestinationScreen(
                             )
                         }
                         TextField(
+                            shape = RoundedCornerShape(20.dp),
                             value = searchQuery,
                             onValueChange = { viewModel.updateSearchQuery(it) },
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(start = 4.dp, end = 2.dp),
+                                .padding(start = 4.dp, end = 10.dp),
                             label = { Text(stringResource(R.string.search_destinations)) },
                             singleLine = true,
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
                             )
                         )
                     }

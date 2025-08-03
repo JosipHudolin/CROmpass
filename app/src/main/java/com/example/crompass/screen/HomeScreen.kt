@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Handshake
@@ -34,87 +32,93 @@ import com.example.crompass.screen.components.HomeScreenButton
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    val scrollState = rememberScrollState()
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(scrollState)
-            .padding(0.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .padding(0.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primary)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo_crompass),
-                contentDescription = "App Logo",
-                modifier = Modifier
-                    .size(270.dp)
-                    .padding(0.dp, 0.dp)
-                    .align(Alignment.Center)
-            )
-        }
-
         Column(
-
-            modifier = Modifier.padding(vertical = 50.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(0.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primary)
             ) {
-                HomeScreenButton(
-                    label = stringResource(R.string.phrases),
-                    route = "phrases",
-                    icon = Icons.Filled.ChatBubble,
-                    navController = navController,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                HomeScreenButton(
-                    label = stringResource(R.string.culture),
-                    route = "culture",
-                    icon = Icons.Filled.Handshake,
-                    navController = navController,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                HomeScreenButton(
-                    label = stringResource(R.string.translate),
-                    route = "translator",
-                    icon = Icons.Filled.Translate,
-                    navController = navController,
-                    color = MaterialTheme.colorScheme.primary
+                Image(
+                    painter = painterResource(id = R.drawable.logo_crompass),
+                    contentDescription = "App Logo",
+                    modifier = Modifier
+                        .size(270.dp)
+                        .padding(0.dp, 0.dp)
+                        .align(Alignment.Center)
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+
+            Column(
+
+                modifier = Modifier.padding(vertical = 50.dp)
             ) {
-                HomeScreenButton(
-                    label = stringResource(R.string.reviews),
-                    route = "review",
-                    icon = Icons.Filled.Stars,
-                    navController = navController,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-                HomeScreenButton(
-                    label = stringResource(R.string.emergency),
-                    route = "emergency",
-                    icon = Icons.Filled.Warning,
-                    navController = navController,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-                HomeScreenButton(
-                    label = stringResource(R.string.settings),
-                    route = "settings",
-                    icon = Icons.Filled.Settings,
-                    navController = navController,
-                    color = MaterialTheme.colorScheme.secondary
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    HomeScreenButton(
+                        label = stringResource(R.string.phrases),
+                        route = "phrases",
+                        icon = Icons.Filled.ChatBubble,
+                        navController = navController,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    HomeScreenButton(
+                        label = stringResource(R.string.culture),
+                        route = "culture",
+                        icon = Icons.Filled.Handshake,
+                        navController = navController,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    HomeScreenButton(
+                        label = stringResource(R.string.translate),
+                        route = "translator",
+                        icon = Icons.Filled.Translate,
+                        navController = navController,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    HomeScreenButton(
+                        label = stringResource(R.string.reviews),
+                        route = "review",
+                        icon = Icons.Filled.Stars,
+                        navController = navController,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    HomeScreenButton(
+                        label = stringResource(R.string.emergency),
+                        route = "emergency",
+                        icon = Icons.Filled.Warning,
+                        navController = navController,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    HomeScreenButton(
+                        label = stringResource(R.string.settings),
+                        route = "settings",
+                        icon = Icons.Filled.Settings,
+                        navController = navController,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
             }
         }
     }
+
 }

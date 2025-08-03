@@ -23,6 +23,7 @@ import com.example.crompass.utils.LocaleHelper
 import java.util.Locale
 import com.example.crompass.ui.theme.ThemeMode
 import androidx.core.content.edit
+import androidx.core.view.WindowCompat
 import com.example.crompass.ui.theme.CroatianRed
 import com.example.crompass.ui.theme.LocalThemeState
 import com.example.crompass.ui.theme.ThemeState
