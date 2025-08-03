@@ -22,6 +22,7 @@ import java.util.Locale
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
+import com.example.crompass.screen.components.Dropdown
 import com.example.crompass.screen.components.PhraseCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,24 +82,63 @@ fun PhrasesScreen(navController: NavHostController) {
             )
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.background)
+        val selectedCategoryState = phrasesViewModel.selectedCategory.collectAsState()
+        val selectedCategory = selectedCategoryState.value
+
+        val filteredPhrasesState = phrasesViewModel.filteredPhrases.collectAsState()
+        val filteredPhrases = filteredPhrasesState.value
+
+        val categories = phrases
+            .map { it.category }
+            .distinct()
+            .sorted()
+            .toMutableList()
+            .apply { add(0, "all") }
+
+        @Composable
+        fun getTranslatedCategory(category: String, phrases: List<com.example.crompass.model.Phrase>): String {
+            val appLanguage = Locale.getDefault().language
+            return if (category == "all") {
+                stringResource(R.string.all)
+            } else {
+                phrases.firstOrNull { it.category == category }
+                    ?.categoryTranslations
+                    ?.get(appLanguage)
+                    ?: category
+            }
+        }
+
+        val translatedCategories = categories.map { getTranslatedCategory(it, phrases) }
+
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .padding(16.dp)
+            .fillMaxWidth()
         ) {
+            Dropdown(
+                label = stringResource(R.string.select_category),
+                options = translatedCategories,
+                selectedOption = getTranslatedCategory(selectedCategory, phrases),
+                onOptionSelected = { selectedLabel ->
+                    val originalKey = categories[translatedCategories.indexOf(selectedLabel)]
+                    phrasesViewModel.setSelectedCategory(originalKey)
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             when {
-                isLoading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
+                isLoading -> CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
                 errorMessage != null -> Text(
                     text = errorMessage ?: stringResource(R.string.unknown_error),
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 else -> LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
                 ) {
-                    items(phrases) { phrase ->
+                    items(filteredPhrases) { phrase ->
                         val phraseText = phrase.phrases[userLanguage] ?: phrase.phrases["hr"] ?: stringResource(R.string.unknown)
                         val croatianText = phrase.phrases["hr"] ?: stringResource(R.string.unknown_hr)
 
