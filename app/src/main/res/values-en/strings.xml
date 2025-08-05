@@ -82,6 +82,18 @@
     <string name="road">Road</string>
     <string name="find_nearby_help">Find nearby help</string>
     <string name="search_for">Search for</string>
+    <string name="invalid_email_or_password">Invalid email and/or password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="password_reset_not_implemented">Password reset not implemented yet.</string>
+    <string name="select_language">Select language</string>
+    <string name="language_change_requires_restart">Language change requires app restart.</string>
+    <string name="password_reset_success">A password reset email has been sent.</string>
+    <string name="enter_email_for_reset">Please enter your email to reset your password.</string>
+    <string name="password_changed_success">Password changed successfully.</string>
+    <string name="passwords_do_not_match">Passwords do not match.</string>
+    <string name="error">Error</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
     <!-- Theme -->
     <string name="theme">Theme</string>
     <string name="light">Light</string>

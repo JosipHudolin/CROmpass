@@ -1,6 +1,5 @@
 package com.example.crompass.screen
 
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -15,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
 import com.example.crompass.ui.theme.LocalThemeState
 import com.example.crompass.utils.LocalAppLocale
+import com.example.crompass.utils.logout
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,8 +24,7 @@ fun SettingsScreen(
 ) {
     val appLocale = LocalAppLocale.current
     val user = FirebaseAuth.getInstance().currentUser
-    val currentLocale = LocalAppLocale.current
-    var selectedLanguage by remember { mutableStateOf(currentLocale.currentLanguageCode) }
+    var selectedLanguage by remember { mutableStateOf(appLocale.currentLanguageCode) }
     var languageDropdownExpanded by remember { mutableStateOf(false) }
 
     val languages = mapOf(
@@ -38,7 +37,7 @@ fun SettingsScreen(
     )
 
     Scaffold(
-        contentWindowInsets = WindowInsets(0), // ⬅️ uklanja automatski padding
+        contentWindowInsets = WindowInsets(0),
         topBar = {
             TopAppBar(
                 windowInsets = WindowInsets(0),
@@ -152,10 +151,7 @@ fun SettingsScreen(
             // Logout Button
             Button(
                 onClick = {
-                    FirebaseAuth.getInstance().signOut()
-                    globalNavController.navigate("auth") {
-                        popUpTo(0) { inclusive = true }
-                    }
+                    logout(globalNavController)
                 }
             ) {
                 Text(stringResource(id = R.string.logout))

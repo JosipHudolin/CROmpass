@@ -67,6 +67,18 @@
     <string name="no_account_register">Nie masz konta? Zarejestruj się</string>
     <string name="have_account_login">Masz już konto? Zaloguj się</string>
     <string name="select_option">Wybierz…</string>
+    <string name="invalid_email_or_password">Nieprawidłowy adres e-mail i/lub hasło</string>
+    <string name="forgot_password">Zapomniałeś hasła?</string>
+    <string name="password_reset_not_implemented">Resetowanie hasła nie zostało jeszcze zaimplementowane.</string>
+    <string name="select_language">Wybierz język</string>
+    <string name="language_change_requires_restart">Aby zmienić język, należy ponownie uruchomić aplikację.</string>
+    <string name="password_reset_success">Wysłano e-mail z linkiem do resetowania hasła.</string>
+    <string name="enter_email_for_reset">Wprowadź swój adres e-mail, aby zresetować hasło.</string>
+    <string name="password_changed_success">Hasło zostało pomyślnie zmienione.</string>
+    <string name="passwords_do_not_match">Hasła się nie zgadzają.</string>
+    <string name="error">Błąd</string>
+    <string name="male">Mężczyzna</string>
+    <string name="female">Kobieta</string>
     <!-- Map and Navigation -->
     <string name="navigate_with_google_maps">Nawiguj z Google Maps</string>
     <string name="leave_review">Dodaj recenzję</string>

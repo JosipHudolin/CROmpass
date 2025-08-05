@@ -29,7 +29,7 @@ fun Dropdown(
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
+            .width(280.dp)
             .padding(vertical = 8.dp)
             .border(
                 width = 1.dp,

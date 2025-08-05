@@ -4,6 +4,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 
 fun registerUser(email: String, password: String, userData: Map<String, Any>, onResult: (Boolean, String?) -> Unit) {
@@ -44,12 +45,17 @@ fun logout(navController: NavHostController) {
         popUpTo(0) { inclusive = true } // Clears the whole backstack
     }
 }
-
-fun sendPasswordReset(email: String, onResult: (Boolean, String?) -> Unit) {
-    Firebase.auth.sendPasswordResetEmail(email)
-        .addOnSuccessListener { onResult(true, null) }
-        .addOnFailureListener { e -> onResult(false, e.message) }
+fun sendPasswordReset(email: String, onResult: (Boolean, String) -> Unit) {
+    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onResult(true, "Reset email sent")
+            } else {
+                onResult(false, task.exception?.localizedMessage ?: "Unknown error")
+            }
+        }
 }
+
 
 fun changePassword(
     currentPassword: String,

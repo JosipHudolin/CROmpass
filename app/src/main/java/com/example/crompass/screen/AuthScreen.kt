@@ -1,12 +1,11 @@
 package com.example.crompass.screen
 
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,22 +16,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.crompass.R
+import com.example.crompass.screen.components.Dropdown
+import com.example.crompass.utils.LocalAppLocale
 import com.example.crompass.utils.loginUser
 import com.example.crompass.utils.registerUser
+import com.example.crompass.utils.sendPasswordReset
 
 @Composable
 fun AuthScreen(
@@ -43,8 +42,6 @@ fun AuthScreen(
     var lastName by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
-    var country by remember { mutableStateOf("") }
-    var language by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -59,19 +56,29 @@ fun AuthScreen(
     val noAccountRegister = stringResource(R.string.no_account_register)
     val haveAccountLogin = stringResource(R.string.have_account_login)
 
-    // Dropdown options and expanded states
-    val genderOptions = listOf("Male", "Female", "Other")
+    val appLocale = LocalAppLocale.current
+    var selectedLanguage by remember { mutableStateOf(appLocale.currentLanguageCode) }
+    var languageDropdownExpanded by remember { mutableStateOf(false) }
 
-    val countryOptions = listOf(
-        "Austria", "Belgium", "Croatia", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Netherlands", "Norway", "Poland", "Portugal", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland"
+    val languages = mapOf(
+        "English 🇬🇧" to "en",
+        "Français 🇫🇷" to "fr",
+        "Deutsch 🇩🇪" to "de",
+        "Italiano 🇮🇹" to "it",
+        "Polski 🇵🇱" to "pl",
+        "Hrvatski 🇭🇷" to "hr"
     )
 
-    val languageOptions = listOf(
-        "English", "German", "French", "Italian", "Croatian", "Polish"
+    val genderOptions = listOf(
+        stringResource(R.string.male),
+        stringResource(R.string.female)
     )
+
 
     val scrollState = rememberScrollState()
     val passwordsNoMatch = stringResource(R.string.passwords_no_match)
+
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -102,8 +109,9 @@ fun AuthScreen(
             }
 
             Text(
+                modifier = Modifier.padding(top = 20.dp, bottom = 0.dp),
                 text = if (isLoginMode) loginLabel else registerLabel,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.secondary
             )
 
@@ -158,27 +166,11 @@ fun AuthScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                SimpleDropdown(
+                Dropdown(
                     label = stringResource(R.string.gender),
                     options = genderOptions,
                     selectedOption = gender,
                     onOptionSelected = { gender = it }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                SimpleDropdown(
-                    label = stringResource(R.string.country),
-                    options = countryOptions,
-                    selectedOption = country,
-                    onOptionSelected = { country = it }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                SimpleDropdown(
-                    label = stringResource(R.string.language),
-                    options = languageOptions,
-                    selectedOption = language,
-                    onOptionSelected = { language = it }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -248,12 +240,17 @@ fun AuthScreen(
                                     popUpTo("auth") { inclusive = true }
                                 }
                             } else {
-                                errorMessage = message
+                                password = ""
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.invalid_email_or_password),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     } else {
                         if (firstName.isBlank() || lastName.isBlank() || age.isBlank() ||
-                            gender.isBlank() || country.isBlank() || language.isBlank()
+                            gender.isBlank()
                         ) {
                             errorMessage = fillAllFields
                             isLoading = false
@@ -272,24 +269,11 @@ fun AuthScreen(
                             return@Button
                         }
 
-                        val languageCodes = mapOf(
-                            "English" to "en",
-                            "German" to "de",
-                            "French" to "fr",
-                            "Italian" to "it",
-                            "Croatian" to "hr",
-                            "Polish" to "pl"
-                        )
-
-                        val languageCode = languageCodes[language] ?: "en"
-
                         val userData = mapOf(
                             "firstName" to firstName,
                             "lastName" to lastName,
                             "age" to age,
                             "gender" to gender,
-                            "country" to country,
-                            "language" to languageCode,
                             "email" to email
                         )
                         registerUser(email, password, userData) { success, message ->
@@ -326,6 +310,44 @@ fun AuthScreen(
                 )
             }
 
+            if (isLoginMode) {
+                TextButton(
+                    onClick = {
+                        if (email.isNotBlank()) {
+                            sendPasswordReset(email) { success, message ->
+                                Toast.makeText(
+                                    context,
+                                    if (success) context.getString(R.string.password_reset_success) else message,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.enter_email_for_reset),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(stringResource(R.string.forgot_password))
+                }
+                Dropdown(
+                    label = stringResource(R.string.change_language),
+                    options = languages.keys.toList(),
+                    selectedOption = languages.entries.firstOrNull { it.value == selectedLanguage }?.key ?: "",
+                    onOptionSelected = { label ->
+                        val code = languages[label] ?: "en"
+                        selectedLanguage = code
+                        appLocale.setLocale(code)
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
             }
@@ -337,75 +359,4 @@ fun AuthScreen(
     }
 }
 
-@Composable
-fun SimpleDropdown(
-    label: String,
-    options: List<String>,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Column {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(start = 12.dp, top = 8.dp)
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                        .clickable { expanded = true },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = selectedOption.ifBlank { stringResource(R.string.select_option) },
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    IconButton(
-                        onClick = { expanded = !expanded },
-                        colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)
-                    ) {
-                        Icon(
-                            imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                            contentDescription = "Dropdown"
-                        )
-                    }
-                }
-
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    options.forEach { option ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = option,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            },
-                            onClick = {
-                                onOptionSelected(option)
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}

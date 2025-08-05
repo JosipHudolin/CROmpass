@@ -73,6 +73,18 @@
     <string name="current_password">Aktuelles Passwort</string>
     <string name="last_name">Nachname</string>
     <string name="register">Registrieren</string>
+    <string name="invalid_email_or_password">Ungültige E-Mail-Adresse und/oder Passwort</string>
+    <string name="forgot_password">Passwort vergessen?</string>
+    <string name="password_reset_not_implemented">Passwort-Zurücksetzung ist noch nicht implementiert.</string>
+    <string name="select_language">Sprache auswählen</string>
+    <string name="language_change_requires_restart">Ein Neustart der App ist erforderlich, um die Sprache zu ändern.</string>
+    <string name="password_reset_success">Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet.</string>
+    <string name="enter_email_for_reset">Bitte geben Sie Ihre E-Mail-Adresse ein, um das Passwort zurückzusetzen.</string>
+    <string name="password_changed_success">Passwort wurde erfolgreich geändert.</string>
+    <string name="passwords_do_not_match">Passwörter stimmen nicht überein.</string>
+    <string name="error">Fehler</string>
+    <string name="male">Männlich</string>
+    <string name="female">Weiblich</string>
     <!-- User Profile -->
     <string name="my_profile">Mein Profil</string>
     <string name="user">Benutzer</string>

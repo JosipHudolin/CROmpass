@@ -68,6 +68,18 @@
     <string name="register">S\'inscrire</string>
     <string name="find_nearby_help">Trouver de l\'aide à proximité</string>
     <string name="search_for">Rechercher</string>
+    <string name="invalid_email_or_password">Adresse e-mail et/ou mot de passe invalide</string>
+    <string name="forgot_password">Mot de passe oublié ?</string>
+    <string name="password_reset_not_implemented">Réinitialisation du mot de passe non encore implémentée.</string>
+    <string name="select_language">Choisir la langue</string>
+    <string name="language_change_requires_restart">Redémarrage de l\'application nécessaire pour changer de langue.</string>
+    <string name="password_reset_success">Un e-mail de réinitialisation du mot de passe a été envoyé.</string>
+    <string name="enter_email_for_reset">Veuillez saisir votre adresse e-mail pour réinitialiser votre mot de passe.</string>
+    <string name="password_changed_success">Mot de passe modifié avec succès.</string>
+    <string name="passwords_do_not_match">Les mots de passe ne correspondent pas.</string>
+    <string name="error">Erreur</string>
+    <string name="male">Homme</string>
+    <string name="female">Femme</string>
     <!-- Theme -->
     <string name="theme">Thème</string>
     <string name="light">Clair</string>

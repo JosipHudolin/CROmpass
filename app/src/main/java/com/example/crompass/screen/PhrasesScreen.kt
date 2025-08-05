@@ -1,6 +1,5 @@
 package com.example.crompass.screen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
 import com.example.crompass.screen.components.Dropdown
 import com.example.crompass.screen.components.PhraseCard
+import com.example.crompass.utils.LocalAppLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +34,8 @@ fun PhrasesScreen(navController: NavHostController) {
     val phrases by phrasesViewModel.phrases.observeAsState(emptyList())
     val isLoading by phrasesViewModel.isLoading.observeAsState(false)
     val errorMessage by phrasesViewModel.errorMessage.observeAsState("")
-    val userLanguage by phrasesViewModel.userLanguage.observeAsState("en") // Observe user language
+    val appLocale = LocalAppLocale.current
+    var selectedLanguage by remember { mutableStateOf(appLocale.currentLanguageCode) }
 
     // Initialize Text-to-Speech
     val context = LocalContext.current
@@ -139,7 +140,7 @@ fun PhrasesScreen(navController: NavHostController) {
                         .background(MaterialTheme.colorScheme.background)
                 ) {
                     items(filteredPhrases) { phrase ->
-                        val phraseText = phrase.phrases[userLanguage] ?: phrase.phrases["hr"] ?: stringResource(R.string.unknown)
+                        val phraseText = phrase.phrases[selectedLanguage] ?: phrase.phrases["hr"] ?: stringResource(R.string.unknown)
                         val croatianText = phrase.phrases["hr"] ?: stringResource(R.string.unknown_hr)
 
                         PhraseCard(

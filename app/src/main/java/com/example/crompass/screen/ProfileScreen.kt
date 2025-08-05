@@ -13,15 +13,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.crompass.model.UserData
-import com.example.crompass.utils.logout
 import com.example.crompass.viewmodel.UserViewModel
-import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
+import com.example.crompass.screen.components.Dropdown
+import com.example.crompass.utils.LocalAppLocale
+import com.example.crompass.utils.changePassword
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,25 +37,15 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
         viewModel.getUserData()
     }
 
-    // Reverse mapping: language code to language name
-    val languageCodeToName = mapOf(
-        "en" to "English",
-        "de" to "German",
-        "fr" to "French",
-        "it" to "Italian",
-        "es" to "Spanish",
-        "nl" to "Dutch",
-        "hr" to "Croatian",
-        "pl" to "Polish",
-        "sv" to "Swedish",
-        "da" to "Danish",
-        "no" to "Norwegian",
-        "fi" to "Finnish",
-        "sk" to "Slovak",
-        "sl" to "Slovenian",
-        "hu" to "Hungarian",
-        "cs" to "Czech"
+    // Gender translations
+    val genderTranslations = mapOf(
+        "en" to mapOf("Male" to "Male", "Female" to "Female", "Other" to "Other"),
+        "hr" to mapOf("Male" to "Muško", "Female" to "Žensko", "Other" to "Drugo")
     )
+
+    // Get current locale and translation maps
+    val appLocaleLanguage = LocalAppLocale.current.currentLanguageCode
+    val genders = genderTranslations[appLocaleLanguage] ?: genderTranslations["en"]!!
 
     Scaffold(
         topBar = {
@@ -99,9 +91,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                             stringResource(R.string.name) to "${userData?.firstName} ${userData?.lastName}",
                             stringResource(R.string.email) to "${userData?.email}",
                             stringResource(R.string.age) to "${userData?.age}",
-                            stringResource(R.string.gender) to "${userData?.gender}",
-                            stringResource(R.string.country) to "${userData?.country}",
-                            stringResource(R.string.language) to (languageCodeToName[userData?.language] ?: stringResource(R.string.unknown))
+                            stringResource(R.string.gender) to (userData?.gender?.let { genders[it] } ?: stringResource(R.string.unknown))
                         ).forEach { (label, value) ->
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
@@ -172,90 +162,83 @@ fun EditProfileDialog(
     var email by remember { mutableStateOf(userData.email) }
     var age by remember { mutableStateOf(userData.age) }
     var gender by remember { mutableStateOf(userData.gender) }
-    var country by remember { mutableStateOf(userData.country) }
-    var language by remember { mutableStateOf(userData.language) }
 
     // Dropdown options
     val genderOptions = listOf("Male", "Female", "Other")
-    val countryOptions = listOf(
-        "Austria", "Belgium", "Croatia", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Netherlands", "Norway", "Poland", "Portugal", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland"
-    )
-
-    val languageOptions = listOf(
-        "English", "German", "French", "Italian", "Croatian", "Polish"
-    )
-
-    // Language codes map
-    val languageCodes = mapOf(
-        "English" to "en",
-        "German" to "de",
-        "French" to "fr",
-        "Italian" to "it",
-        "Croatian" to "hr",
-        "Polish" to "pl"
-    )
-
-    val languageCodeToName = mapOf(
-        "en" to "English",
-        "de" to "German",
-        "fr" to "French",
-        "it" to "Italian",
-        "hr" to "Croatian",
-        "pl" to "Polish"
-    )
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.edit_info)) },
         text = {
             Column {
-                TextField(value = firstName, onValueChange = { firstName = it }, label = { Text(stringResource(R.string.name)) })
-                TextField(value = lastName, onValueChange = { lastName = it }, label = { Text(stringResource(R.string.last_name)) })
-                TextField(value = email, onValueChange = { email = it }, label = { Text(stringResource(R.string.email)) })
-                TextField(value = age, onValueChange = { age = it }, label = { Text(stringResource(R.string.age)) })
+                TextField(
+                    value = firstName,
+                    onValueChange = { firstName = it },
+                    label = { Text(stringResource(R.string.name)) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+                TextField(
+                    value = lastName,
+                    onValueChange = { lastName = it },
+                    label = { Text(stringResource(R.string.last_name)) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+                TextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text(stringResource(R.string.email)) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+                TextField(
+                    value = age,
+                    onValueChange = { age = it },
+                    label = { Text(stringResource(R.string.age)) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
 
                 // Gender Dropdown
-                SimpleDropdown(
+                Dropdown(
                     label = stringResource(R.string.gender),
                     options = genderOptions,
                     selectedOption = gender,
                     onOptionSelected = { gender = it }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-
-                // Country Dropdown
-                SimpleDropdown(
-                    label = stringResource(R.string.country),
-                    options = countryOptions,
-                    selectedOption = country,
-                    onOptionSelected = { country = it }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Language Dropdown (show names but save the language code)
-                SimpleDropdown(
-                    label = stringResource(R.string.language),
-                    options = languageOptions,
-                    selectedOption = languageCodeToName[language] ?: "English",
-                    onOptionSelected = { selectedLanguage ->
-                        language = languageCodes[selectedLanguage] ?: "en"
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
             }
         },
         confirmButton = {
             TextButton(onClick = {
-                val selectedLanguageCode = languageCodes.entries.find { it.value == language }?.value ?: language
                 onSave(
                     mapOf(
                         "firstName" to firstName,
                         "lastName" to lastName,
                         "email" to email,
                         "age" to age,
-                        "gender" to gender,
-                        "country" to country,
-                        "language" to selectedLanguageCode // Save the language code here
+                        "gender" to gender
                     )
                 )
                 onDismiss()
@@ -267,7 +250,9 @@ fun EditProfileDialog(
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.cancel))
             }
-        }
+        },
+        shape = RoundedCornerShape(16.dp),
+        containerColor = MaterialTheme.colorScheme.surface
     )
 }
 
@@ -280,7 +265,6 @@ fun ChangePasswordDialog(
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    // Get the current context using LocalContext
     val context = LocalContext.current
 
     AlertDialog(
@@ -288,33 +272,58 @@ fun ChangePasswordDialog(
         title = { Text(stringResource(R.string.change_password)) },
         text = {
             Column {
-                TextField(value = currentPassword, onValueChange = { currentPassword = it }, label = { Text(stringResource(R.string.current_password)) })
-                TextField(value = newPassword, onValueChange = { newPassword = it }, label = { Text(stringResource(R.string.new_password)) })
-                TextField(value = confirmPassword, onValueChange = { confirmPassword = it }, label = { Text(stringResource(R.string.confirm_password)) })
+                TextField(
+                    value = currentPassword,
+                    onValueChange = { currentPassword = it },
+                    label = { Text(stringResource(R.string.current_password)) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+                TextField(
+                    value = newPassword,
+                    onValueChange = { newPassword = it },
+                    label = { Text(stringResource(R.string.new_password)) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+                TextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = { Text(stringResource(R.string.confirm_password)) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
             }
         },
         confirmButton = {
             TextButton(onClick = {
-                FirebaseAuth.getInstance().currentUser?.let { user ->
-                    if (newPassword == confirmPassword) {
-                        if (newPassword.length >= 6) { // Password length validation
-                            user.updatePassword(newPassword)
-                                .addOnSuccessListener {
-                                    // Show Toast that password was successfully changed
-                                    Toast.makeText(context, "Password changed successfully.", Toast.LENGTH_SHORT).show()
-                                    onPasswordChanged("Password changed successfully.")
-                                }
-                                .addOnFailureListener { e ->
-                                    onPasswordChanged("Error changing password: ${e.localizedMessage}")
-                                }
+                if (newPassword == confirmPassword) {
+                    changePassword(currentPassword, newPassword) { success, message ->
+                        if (success) {
+                            Toast.makeText(context, context.getString(R.string.password_changed_success), Toast.LENGTH_SHORT).show()
                         } else {
-                            onPasswordChanged("Password must be at least 6 characters.")
+                            Toast.makeText(context, message ?: context.getString(R.string.error), Toast.LENGTH_SHORT).show()
                         }
-                    } else {
-                        onPasswordChanged("Passwords do not match.")
+                        onPasswordChanged(message ?: "")
                     }
-                } ?: run {
-                    onPasswordChanged("User is not logged in.")
+                } else {
+                    Toast.makeText(context, context.getString(R.string.passwords_do_not_match), Toast.LENGTH_SHORT).show()
+                    onPasswordChanged(context.getString(R.string.passwords_do_not_match))
                 }
                 onDismiss()
             }) {
@@ -325,6 +334,8 @@ fun ChangePasswordDialog(
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.cancel))
             }
-        }
+        },
+        shape = RoundedCornerShape(16.dp),
+        containerColor = MaterialTheme.colorScheme.surface
     )
 }

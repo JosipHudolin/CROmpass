@@ -52,6 +52,18 @@
     <string name="no_culture_rules">Nessuna regola culturale disponibile.</string>
     <string name="loading_culture_rules">Caricamento delle regole culturali…</string>
     <string name="back">Indietro</string>
+    <string name="invalid_email_or_password">Email e/o password non validi</string>
+    <string name="forgot_password">Password dimenticata?</string>
+    <string name="password_reset_not_implemented">La reimpostazione della password non è ancora implementata.</string>
+    <string name="select_language">Seleziona lingua</string>
+    <string name="language_change_requires_restart">È necessario riavviare l\'app per cambiare lingua.</string>
+    <string name="password_reset_success">È stata inviata un\'e-mail per reimpostare la password.</string>
+    <string name="enter_email_for_reset">Inserisci la tua e-mail per reimpostare la password.</string>
+    <string name="password_changed_success">Password cambiata con successo.</string>
+    <string name="passwords_do_not_match">Le password non corrispondono.</string>
+    <string name="error">Errore</string>
+    <string name="male">Maschio</string>
+    <string name="female">Femmina</string>
     <!-- Map and Navigation -->
     <string name="navigate_with_google_maps">Naviga con Google Maps</string>
     <string name="leave_review">Lascia una recensione</string>

@@ -74,6 +74,18 @@
     <string name="select_option">Odaberi…</string>
     <string name="confirm_password">Potvrdi lozinku</string>
     <string name="password">Lozinka</string>
+    <string name="invalid_email_or_password">Neispravna e-mail adresa i/ili lozinka</string>
+    <string name="forgot_password">Zaboravljena lozinka?</string>
+    <string name="password_reset_not_implemented">Ponovno postavljanje lozinke još nije omogućeno.</string>
+    <string name="select_language">Odaberite jezik</string>
+    <string name="language_change_requires_restart">Za promjenu jezika potrebno je ponovno pokrenuti aplikaciju.</string>
+    <string name="password_reset_success">E-mail za poništavanje lozinke je poslan.</string>
+    <string name="enter_email_for_reset">Unesite svoju e-mail adresu za poništavanje lozinke.</string>
+    <string name="password_changed_success">Lozinka je uspješno promijenjena.</string>
+    <string name="passwords_do_not_match">Lozinke se ne podudaraju.</string>
+    <string name="error">Greška</string>
+    <string name="male">Muško</string>
+    <string name="female">Žensko</string>
 
     <!-- General Messages -->
     <string name="unknown_error">Nepoznata pogreška</string>

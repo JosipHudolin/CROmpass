@@ -16,8 +16,13 @@ class CultureRulesRepository {
             for (document in snapshot.documents) {
                 val category = document.getString("category") ?: ""
                 val translations = document.get("translations") as? Map<String, String> ?: emptyMap()
+                val categoryTranslations = document.get("categoryTranslations") as? Map<String, String> ?: emptyMap()
 
-                val cultureRule = CultureRule(category, translations)
+                val cultureRule = CultureRule(
+                    category = category,
+                    translations = translations,
+                    categoryTranslations = categoryTranslations
+                )
                 cultureRulesList.add(cultureRule)
             }
         } catch (e: Exception) {
