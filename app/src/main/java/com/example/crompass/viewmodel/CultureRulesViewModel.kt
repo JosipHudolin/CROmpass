@@ -83,8 +83,8 @@ class CultureRulesViewModel : ViewModel() {
         val category = _selectedCategory.value ?: "All"
 
         return cultureRules.filter { rule ->
-            (category == "All" || rule.category.replace("_", " ").replaceFirstChar { it.uppercase() } == category) &&
-            rule.translations.containsKey(language)
+            (category == "All" || rule.category == category) &&
+                    rule.translations.containsKey(language)
         }
     }
 }

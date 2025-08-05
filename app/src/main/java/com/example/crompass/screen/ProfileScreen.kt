@@ -37,15 +37,8 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
         viewModel.getUserData()
     }
 
-    // Gender translations
-    val genderTranslations = mapOf(
-        "en" to mapOf("Male" to "Male", "Female" to "Female", "Other" to "Other"),
-        "hr" to mapOf("Male" to "Muško", "Female" to "Žensko", "Other" to "Drugo")
-    )
-
     // Get current locale and translation maps
     val appLocaleLanguage = LocalAppLocale.current.currentLanguageCode
-    val genders = genderTranslations[appLocaleLanguage] ?: genderTranslations["en"]!!
 
     Scaffold(
         topBar = {
@@ -91,7 +84,13 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                             stringResource(R.string.name) to "${userData?.firstName} ${userData?.lastName}",
                             stringResource(R.string.email) to "${userData?.email}",
                             stringResource(R.string.age) to "${userData?.age}",
-                            stringResource(R.string.gender) to (userData?.gender?.let { genders[it] } ?: stringResource(R.string.unknown))
+                            stringResource(R.string.gender) to (
+                                when (userData?.gender?.lowercase()) {
+                                    "male" -> stringResource(R.string.male)
+                                    "female" -> stringResource(R.string.female)
+                                    else -> stringResource(R.string.unknown)
+                                }
+                            )
                         ).forEach { (label, value) ->
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
@@ -163,8 +162,22 @@ fun EditProfileDialog(
     var age by remember { mutableStateOf(userData.age) }
     var gender by remember { mutableStateOf(userData.gender) }
 
-    // Dropdown options
-    val genderOptions = listOf("Male", "Female", "Other")
+    val context = LocalContext.current
+    // Localized gender options
+    val genderOptions = listOf(
+        stringResource(R.string.male),
+        stringResource(R.string.female)
+    )
+    // Map to convert localized gender back to English key
+    val genderToEnglish = mapOf(
+        context.getString(R.string.male) to "male",
+        context.getString(R.string.female) to "female"
+    )
+    // When showing the dropdown, display the localized value for the current gender
+    val selectedGenderLocalized = remember(gender, genderOptions) {
+        // Try to find the localized string corresponding to the current gender key
+        genderOptions.find { genderToEnglish[it] == gender } ?: gender
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -224,8 +237,10 @@ fun EditProfileDialog(
                 Dropdown(
                     label = stringResource(R.string.gender),
                     options = genderOptions,
-                    selectedOption = gender,
-                    onOptionSelected = { gender = it }
+                    selectedOption = selectedGenderLocalized,
+                    onOptionSelected = { selected ->
+                        gender = genderToEnglish[selected] ?: "Other"
+                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -238,7 +253,7 @@ fun EditProfileDialog(
                         "lastName" to lastName,
                         "email" to email,
                         "age" to age,
-                        "gender" to gender
+                        "gender" to (genderToEnglish[gender] ?: gender ?: "Other")
                     )
                 )
                 onDismiss()

@@ -58,21 +58,4 @@ class UserViewModel : ViewModel() {
         }
     }
 
-    fun getUserLanguage(onResult: (String?) -> Unit) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId != null) {
-            viewModelScope.launch {
-                try {
-                    val language = userRepository.getUserLanguage(userId)
-                    onResult(language)
-                } catch (e: Exception) {
-                    _errorMessage.postValue("Error fetching language: ${e.message}")
-                    onResult(null)
-                }
-            }
-        } else {
-            _errorMessage.postValue("User not logged in.")
-            onResult(null)
-        }
-    }
 }

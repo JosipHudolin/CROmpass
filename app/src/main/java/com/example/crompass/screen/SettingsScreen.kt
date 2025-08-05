@@ -110,10 +110,14 @@ fun SettingsScreen(
                         Triple(R.string.system_default, false, true)
                 )
 
-                val selectedTheme = when {
-                    themeState.useSystemTheme -> R.string.system_default
-                    themeState.isDarkTheme -> R.string.dark
-                    else -> R.string.light
+                val selectedTheme by remember {
+                    derivedStateOf {
+                        when {
+                            themeState.useSystemTheme -> R.string.system_default
+                            themeState.isDarkTheme -> R.string.dark
+                            else -> R.string.light
+                        }
+                    }
                 }
 
                 themeOptions.forEach { (labelRes, darkValue, isSystem) ->

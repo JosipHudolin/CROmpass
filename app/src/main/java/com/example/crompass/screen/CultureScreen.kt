@@ -1,5 +1,6 @@
 package com.example.crompass.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,8 +25,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.crompass.screen.components.CultureRuleCard
 import com.example.crompass.screen.components.Dropdown
+import com.example.crompass.utils.LocalAppLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +44,8 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
         "pl" to stringResource(R.string.polish),
     )
     val cultureRules = viewModel.cultureRules
-    val userLanguage by viewModel.userLanguage.observeAsState("en")
+    val appLocale = LocalAppLocale.current
+    var userLanguage by remember { mutableStateOf(appLocale.currentLanguageCode) }
     val selectedLanguage by viewModel.selectedLanguage.observeAsState(userLanguage)
     val selectedCategory by viewModel.selectedCategory.observeAsState("All")
     val isLoading by viewModel.isLoading.observeAsState(false)
@@ -88,7 +94,15 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
             )
 
             val availableLanguages = listOf("en", "de", "fr", "hr", "it", "pl")
-            val availableCategories = listOf("All") + cultureRules.map { it.category.replace("_", " ").replaceFirstChar { c -> c.uppercase() } }.distinct()
+            val availableCategories = buildMap {
+                put("All", stringResource(R.string.all))
+                cultureRules.forEach { rule ->
+                    val translated = rule.categoryTranslations[userLanguage]
+                    if (!translated.isNullOrBlank()) {
+                        put(rule.category, translated)
+                    }
+                }
+            }
 
             Dropdown(
                 label = stringResource(R.string.language),
@@ -104,9 +118,14 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
 
             Dropdown(
                 label = stringResource(R.string.select_category),
-                options = availableCategories,
-                selectedOption = selectedCategory,
-                onOptionSelected = { viewModel.setSelectedCategory(it) }
+                options = availableCategories.values.toList(),
+                selectedOption = availableCategories[selectedCategory] ?: stringResource(R.string.all),
+                onOptionSelected = { selectedTranslated ->
+                    val selectedCategoryKey = cultureRules.firstOrNull {
+                        it.categoryTranslations[userLanguage] == selectedTranslated
+                    }?.category ?: "All"
+                    viewModel.setSelectedCategory(selectedCategoryKey)
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -132,7 +151,7 @@ fun CultureScreen(navController: NavHostController, viewModel: CultureRulesViewM
                 ) {
                     items(filteredRules) { rule ->
                         CultureRuleCard(
-                            category = rule.category,
+                            category = rule.categoryTranslations[userLanguage] ?: rule.category,
                             translation = rule.translations[selectedLanguage] ?: ""
                         )
                     }

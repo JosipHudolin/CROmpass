@@ -17,22 +17,7 @@ class UserRepository(private val db: FirebaseFirestore) {
                     email = data["email"] as String,
                     age = data["age"] as String,
                     gender = data["gender"] as String,
-                    country = data["country"] as String,
-                    language = data["language"] as String
                 )
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    suspend fun getUserLanguage(userId: String): String? {
-        return try {
-            val document = db.collection("users").document(userId).get().await()
-            if (document.exists()) {
-                document.getString("language")
             } else {
                 null
             }

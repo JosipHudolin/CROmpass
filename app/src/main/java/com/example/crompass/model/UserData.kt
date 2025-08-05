@@ -6,6 +6,4 @@ data class UserData(
     val email: String,
     val age: String,
     val gender: String,
-    val country: String,
-    val language: String
 )

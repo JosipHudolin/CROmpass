@@ -69,10 +69,11 @@ fun AuthScreen(
         "Hrvatski 🇭🇷" to "hr"
     )
 
-    val genderOptions = listOf(
-        stringResource(R.string.male),
-        stringResource(R.string.female)
+    val genderTranslationMap = mapOf(
+        stringResource(R.string.male) to "male",
+        stringResource(R.string.female) to "female"
     )
+    val genderOptions = genderTranslationMap.keys.toList()
 
 
     val scrollState = rememberScrollState()
@@ -169,8 +170,10 @@ fun AuthScreen(
                 Dropdown(
                     label = stringResource(R.string.gender),
                     options = genderOptions,
-                    selectedOption = gender,
-                    onOptionSelected = { gender = it }
+                    selectedOption = genderTranslationMap.entries.firstOrNull { it.value == gender }?.key ?: "",
+                    onOptionSelected = { selectedTranslated ->
+                        gender = genderTranslationMap[selectedTranslated] ?: ""
+                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
