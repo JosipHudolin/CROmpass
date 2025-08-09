@@ -58,6 +58,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import com.example.crompass.screen.components.Dropdown
+import com.example.crompass.utils.LocalAppLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,11 +72,27 @@ fun DestinationScreen(
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val context = LocalContext.current
 
+    val language = LocalAppLocale.current.currentLanguageCode
+
     var isDropdownExpanded by remember { mutableStateOf(false) }
     var selectedDestination by remember { mutableStateOf<Destination?>(null) }
     var showReviewDialog by remember { mutableStateOf(false) }
     var showReviewList by remember { mutableStateOf(false) }
     val searchQuery by viewModel.searchQuery.collectAsState("")
+
+    val allLocations by viewModel.allLocations.collectAsState()
+
+    val allLabel = stringResource(R.string.all)
+    val categoryMap = remember(allLocations, language, allLabel) {
+        // key = DB category (eng), value = translated label for current app language
+        val map = linkedMapOf<String, String>()
+        map["All"] = allLabel
+        allLocations
+            .map { it.category to (it.categoryTranslations[language] ?: it.category) }
+            .distinctBy { it.first }
+            .forEach { (key, label) -> map[key] = label }
+        map
+    }
 
     Scaffold(
         topBar = {
@@ -126,11 +143,17 @@ fun DestinationScreen(
                 .padding(innerPadding)
         ) {
             // Category filter
+            val translatedCategories = categoryMap.values.toList()
+            val selectedCategoryTranslated = categoryMap[selectedCategory ?: "All"] ?: allLabel
+
             Dropdown(
                 label = stringResource(R.string.select_category),
-                options = listOf("All") + viewModel.getAllCategories(),
-                selectedOption = selectedCategory ?: "All",
-                onOptionSelected = { viewModel.updateCategory(it.takeIf { it != "All" }) },
+                options = translatedCategories,
+                selectedOption = selectedCategoryTranslated,
+                onOptionSelected = { selectedTranslatedCategory ->
+                    val englishCategory = categoryMap.entries.firstOrNull { it.value == selectedTranslatedCategory }?.key ?: "All"
+                    viewModel.updateCategory(englishCategory.takeIf { it != "All" })
+                },
             )
 
             val cameraPositionState = rememberCameraPositionState {
@@ -153,10 +176,12 @@ fun DestinationScreen(
                 destinations.forEach { destination ->
                     val geoPoint = destination.location
                     if (geoPoint != null) {
+                        val markerTitle = destination.nameTranslations?.get(language) ?: destination.name
+                        val markerSnippet = destination.descriptionTranslations?.get(language) ?: destination.description
                         Marker(
                             state = MarkerState(position = LatLng(geoPoint.latitude, geoPoint.longitude)),
-                            title = destination.name,
-                            snippet = destination.description,
+                            title = markerTitle,
+                            snippet = markerSnippet,
                             onClick = {
                                 selectedDestination = destination
                                 false
@@ -166,6 +191,8 @@ fun DestinationScreen(
                 }
             }
             selectedDestination?.let { destination ->
+                val displayName = destination.nameTranslations?.get(language) ?: destination.name
+                val displayDescription = destination.descriptionTranslations?.get(language) ?: destination.description
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -174,9 +201,9 @@ fun DestinationScreen(
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = destination.name, style = MaterialTheme.typography.titleMedium)
+                        Text(text = displayName, style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = destination.description, style = MaterialTheme.typography.bodyMedium)
+                        Text(text = displayDescription, style = MaterialTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = stringResource(R.string.navigate_with_google_maps),

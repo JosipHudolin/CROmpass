@@ -86,6 +86,8 @@
     <string name="error">Greška</string>
     <string name="male">Muško</string>
     <string name="female">Žensko</string>
+    <string name="password_changed_successfully">Lozinka je uspješno promijenjena.</string>
+    <string name="error_changing_password">Greška prilikom promjene lozinke.</string>
 
     <!-- General Messages -->
     <string name="unknown_error">Nepoznata pogreška</string>

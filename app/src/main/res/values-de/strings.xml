@@ -85,6 +85,8 @@
     <string name="error">Fehler</string>
     <string name="male">Männlich</string>
     <string name="female">Weiblich</string>
+    <string name="password_changed_successfully">Passwort wurde erfolgreich geändert.</string>
+    <string name="error_changing_password">Fehler beim Ändern des Passworts.</string>
     <!-- User Profile -->
     <string name="my_profile">Mein Profil</string>
     <string name="user">Benutzer</string>

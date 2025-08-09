@@ -174,10 +174,7 @@ fun EditProfileDialog(
         context.getString(R.string.female) to "female"
     )
     // When showing the dropdown, display the localized value for the current gender
-    val selectedGenderLocalized = remember(gender, genderOptions) {
-        // Try to find the localized string corresponding to the current gender key
-        genderOptions.find { genderToEnglish[it] == gender } ?: gender
-    }
+    val selectedGenderLocalized = genderToEnglish.entries.find { it.value == gender }?.key ?: genderOptions.first()
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -237,9 +234,9 @@ fun EditProfileDialog(
                 Dropdown(
                     label = stringResource(R.string.gender),
                     options = genderOptions,
-                    selectedOption = selectedGenderLocalized,
+                    selectedOption = genderOptions.find { it == selectedGenderLocalized } ?: genderOptions.first(),
                     onOptionSelected = { selected ->
-                        gender = genderToEnglish[selected] ?: "Other"
+                        gender = genderToEnglish[selected] ?: genderToEnglish.values.firstOrNull { it == selected } ?: "Other"
                     }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -294,8 +291,8 @@ fun ChangePasswordDialog(
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
                         disabledIndicatorColor = Color.Transparent
                     )
                 )
@@ -306,8 +303,8 @@ fun ChangePasswordDialog(
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
                         disabledIndicatorColor = Color.Transparent
                     )
                 )
@@ -318,8 +315,8 @@ fun ChangePasswordDialog(
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
                         disabledIndicatorColor = Color.Transparent
                     )
                 )
@@ -330,9 +327,9 @@ fun ChangePasswordDialog(
                 if (newPassword == confirmPassword) {
                     changePassword(currentPassword, newPassword) { success, message ->
                         if (success) {
-                            Toast.makeText(context, context.getString(R.string.password_changed_success), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.password_changed_successfully), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, message ?: context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.error_changing_password), Toast.LENGTH_SHORT).show()
                         }
                         onPasswordChanged(message ?: "")
                     }

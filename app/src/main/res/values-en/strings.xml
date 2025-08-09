@@ -94,6 +94,8 @@
     <string name="error">Error</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <string name="password_changed_successfully">Password changed successfully.</string>
+    <string name="error_changing_password">Error changing password.</string>
     <!-- Theme -->
     <string name="theme">Theme</string>
     <string name="light">Light</string>

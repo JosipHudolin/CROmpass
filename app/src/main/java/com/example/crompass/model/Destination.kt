@@ -8,5 +8,7 @@ data class Destination(
     val description: String = "",
     val category: String = "",
     val location: GeoPoint = GeoPoint(0.0, 0.0),
-    val imageUrl: String = ""
+    val categoryTranslations: Map<String, String> = emptyMap(),
+    val nameTranslations: Map<String, String> = emptyMap(),
+    val descriptionTranslations: Map<String, String> = emptyMap()
 )

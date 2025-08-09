@@ -64,6 +64,8 @@
     <string name="error">Errore</string>
     <string name="male">Maschio</string>
     <string name="female">Femmina</string>
+    <string name="password_changed_successfully">Password cambiata con successo.</string>
+    <string name="error_changing_password">Errore durante il cambio della password.</string>
     <!-- Map and Navigation -->
     <string name="navigate_with_google_maps">Naviga con Google Maps</string>
     <string name="leave_review">Lascia una recensione</string>

@@ -66,7 +66,7 @@ fun HomeScreen(navController: NavHostController) {
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     HomeScreenButton(
                         label = stringResource(R.string.phrases),

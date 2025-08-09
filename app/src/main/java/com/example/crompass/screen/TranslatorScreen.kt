@@ -35,14 +35,16 @@ fun TranslatorScreen(navController: NavHostController, viewModel: TranslatorView
     var inputText by remember { mutableStateOf("") }
     var selectedLanguage by remember { mutableStateOf("hr") }
 
-    val languageNames = mapOf(
-        "en" to "English",
-        "de" to "German",
-        "fr" to "French",
-        "it" to "Italian",
-        "hr" to "Croatian",
-        "pl" to "Polish"
+    val languageLabelToCode = mapOf(
+        stringResource(R.string.english) to "en",
+        stringResource(R.string.german) to "de",
+        stringResource(R.string.french) to "fr",
+        stringResource(R.string.italian) to "it",
+        stringResource(R.string.croatian) to "hr",
+        stringResource(R.string.polish) to "pl"
     )
+
+    val languageOptions = languageLabelToCode.keys.toList()
 
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
 
@@ -104,15 +106,17 @@ fun TranslatorScreen(navController: NavHostController, viewModel: TranslatorView
                     focusedTextColor = MaterialTheme.colorScheme.primary,
                     unfocusedTextColor = MaterialTheme.colorScheme.primary,
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
 
             Dropdown(
                 label = stringResource(R.string.target_langugage),
-                options = languageNames.values.toList(),
-                selectedOption = languageNames[selectedLanguage] ?: "English",
+                options = languageOptions,
+                selectedOption = languageLabelToCode.entries.firstOrNull { it.value == selectedLanguage }?.key
+                    ?: stringResource(R.string.english),
                 onOptionSelected = { selectedName ->
-                    selectedLanguage = languageNames.entries.firstOrNull { it.value == selectedName }?.key ?: "en"
+                    selectedLanguage = languageLabelToCode[selectedName] ?: "en"
                 }
             )
 

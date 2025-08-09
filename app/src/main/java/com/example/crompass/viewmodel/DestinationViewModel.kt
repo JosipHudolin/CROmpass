@@ -24,6 +24,9 @@ class DestinationViewModel : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    private val _appLanguage = MutableStateFlow(java.util.Locale.getDefault().language)
+    val appLanguage: StateFlow<String> = _appLanguage.asStateFlow()
+
     init {
         getAllDestinations()
     }
@@ -46,17 +49,33 @@ class DestinationViewModel : ViewModel() {
         applyFilter()
     }
 
+    fun setAppLanguage(lang: String) {
+        if (_appLanguage.value != lang) {
+            _appLanguage.value = lang
+            applyFilter()
+        }
+    }
+
     private fun applyFilter() {
         val category = _selectedCategory.value
         val query = _searchQuery.value.lowercase()
+        val lang = _appLanguage.value
+
         _filteredLocations.value = _allLocations.value.filter { destination ->
             val matchesCategory = category == null || destination.category.equals(category, ignoreCase = true)
-            val matchesQuery = destination.name.lowercase().contains(query) || destination.description.lowercase().contains(query)
+
+            val nameText = destination.nameTranslations[lang] ?: destination.name
+            val descText = destination.descriptionTranslations[lang] ?: destination.description
+
+            val matchesQuery = query.isBlank() ||
+                nameText.lowercase().contains(query) ||
+                descText.lowercase().contains(query)
+
             matchesCategory && matchesQuery
         }
     }
 
     fun getAllCategories(): List<String> {
-        return _allLocations.value.mapNotNull { it.category }.distinct()
+        return _allLocations.value.map { it.category }.filter { it.isNotBlank() }.distinct()
     }
 }

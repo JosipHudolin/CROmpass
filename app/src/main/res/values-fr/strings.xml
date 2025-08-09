@@ -80,6 +80,8 @@
     <string name="error">Erreur</string>
     <string name="male">Homme</string>
     <string name="female">Femme</string>
+    <string name="password_changed_successfully">Mot de passe changé avec succès.</string>
+    <string name="error_changing_password">Erreur lors du changement de mot de passe.</string>
     <!-- Theme -->
     <string name="theme">Thème</string>
     <string name="light">Clair</string>

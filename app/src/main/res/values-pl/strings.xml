@@ -92,6 +92,8 @@
     <string name="password">Hasło</string>
     <string name="last_name">Nazwisko</string>
     <string name="register">Zarejestruj się</string>
+    <string name="password_changed_successfully">Hasło zostało pomyślnie zmienione.</string>
+    <string name="error_changing_password">Błąd podczas zmiany hasła.</string>
     <!-- Theme -->
     <string name="theme">Motyw</string>
     <string name="light">Jasny</string>

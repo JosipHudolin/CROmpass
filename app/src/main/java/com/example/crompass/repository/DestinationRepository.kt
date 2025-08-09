@@ -9,14 +9,18 @@ class DestinationRepository {
 
     suspend fun getDestinations(category: String? = null): List<Destination> {
         return try {
-            val query = if (category.isNullOrBlank()) {
+            val query = if (category.isNullOrBlank() || category == "all") {
                 db.collection("destinations")
             } else {
-                db.collection("destinations").whereEqualTo("category", category)
+                // Filtrira prema engleskoj kategoriji
+                db.collection("destinations")
+                    .whereEqualTo("category", category)
             }
 
             val snapshot = query.get().await()
-            snapshot.documents.mapNotNull { it.toObject(Destination::class.java)?.copy(id = it.id) }
+            snapshot.documents.mapNotNull {
+                it.toObject(Destination::class.java)?.copy(id = it.id)
+            }
         } catch (e: Exception) {
             emptyList()
         }
