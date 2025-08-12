@@ -122,8 +122,8 @@ fun DestinationScreen(
                             label = { Text(stringResource(R.string.search_destinations)) },
                             singleLine = true,
                             colors = TextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent

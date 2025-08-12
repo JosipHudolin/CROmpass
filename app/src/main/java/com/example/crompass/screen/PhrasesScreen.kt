@@ -21,6 +21,7 @@ import java.util.Locale
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
+import com.example.crompass.model.Phrase
 import com.example.crompass.screen.components.Dropdown
 import com.example.crompass.screen.components.PhraseCard
 import com.example.crompass.utils.LocalAppLocale
@@ -33,9 +34,10 @@ fun PhrasesScreen(navController: NavHostController) {
     // Observe LiveData from the ViewModel
     val phrases by phrasesViewModel.phrases.observeAsState(emptyList())
     val isLoading by phrasesViewModel.isLoading.observeAsState(false)
-    val errorMessage by phrasesViewModel.errorMessage.observeAsState("")
+    val errorMessage by phrasesViewModel.errorMessage.observeAsState(null)
     val appLocale = LocalAppLocale.current
-    var selectedLanguage by remember { mutableStateOf(appLocale.currentLanguageCode) }
+    // Always use appLocale.currentLanguageCode as the selected language
+    val selectedLanguage = appLocale.currentLanguageCode
 
     // Initialize Text-to-Speech
     val context = LocalContext.current
@@ -45,8 +47,18 @@ fun PhrasesScreen(navController: NavHostController) {
         tts = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 val languageAvailable = tts?.isLanguageAvailable(Locale("hr")) == TextToSpeech.LANG_AVAILABLE
-                tts?.language = if (languageAvailable) Locale("hr") else Locale("en")
+                if (languageAvailable) {
+                    tts?.language = Locale("hr")
+                } else {
+                    tts?.language = Locale("en")
+                    tts?.speak("Language not supported", TextToSpeech.QUEUE_FLUSH, null, null)
+                }
             }
+        }
+    }
+    DisposableEffect(tts) {
+        onDispose {
+            tts?.shutdown()
         }
     }
 
@@ -56,10 +68,6 @@ fun PhrasesScreen(navController: NavHostController) {
 
     // Load phrases data on screen load
     LaunchedEffect(Unit) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId != null) {
-            phrasesViewModel.getUserLanguage(userId)
-        }
         phrasesViewModel.getPhrases()
     }
 
@@ -97,8 +105,8 @@ fun PhrasesScreen(navController: NavHostController) {
             .apply { add(0, "all") }
 
         @Composable
-        fun getTranslatedCategory(category: String, phrases: List<com.example.crompass.model.Phrase>): String {
-            val appLanguage = Locale.getDefault().language
+        fun getTranslatedCategory(category: String, phrases: List<Phrase>): String {
+            val appLanguage = LocalAppLocale.current.currentLanguageCode
             return if (category == "all") {
                 stringResource(R.string.all)
             } else {
@@ -128,7 +136,7 @@ fun PhrasesScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
             when {
                 isLoading -> CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
-                errorMessage != null -> Text(
+                !errorMessage.isNullOrBlank() -> Text(
                     text = errorMessage ?: stringResource(R.string.unknown_error),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.CenterHorizontally)

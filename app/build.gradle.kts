@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.generativeai)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation(libs.androidx.navigation.compose)
     implementation(libs.okhttp)
     implementation(libs.json)

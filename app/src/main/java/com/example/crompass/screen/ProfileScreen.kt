@@ -24,10 +24,11 @@ import com.example.crompass.R
 import com.example.crompass.screen.components.Dropdown
 import com.example.crompass.utils.LocalAppLocale
 import com.example.crompass.utils.changePassword
+import com.example.crompass.utils.logout
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = viewModel()) {
+fun ProfileScreen(navController: NavHostController, globalNavController: NavHostController, viewModel: UserViewModel = viewModel()) {
     val userData by viewModel.userData.observeAsState()
     val errorMessage by viewModel.errorMessage.observeAsState()
     var isEditDialogOpen by remember { mutableStateOf(false) }
@@ -137,11 +138,17 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                             ChangePasswordDialog(
                                 onDismiss = { isChangePasswordDialogOpen = false },
                                 onPasswordChanged = { message ->
-                                    // Handle password changed message
-                                    // Show a Toast or update UI accordingly
                                     println(message)
                                 }
                             )
+                        }
+                        Button(
+                            onClick = {
+                                logout(globalNavController)
+                            },
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(stringResource(id = R.string.logout))
                         }
                     }
                 }

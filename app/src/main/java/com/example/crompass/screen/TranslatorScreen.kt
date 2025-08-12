@@ -96,7 +96,7 @@ fun TranslatorScreen(navController: NavHostController, viewModel: TranslatorView
                 onValueChange = { inputText = it },
                 label = {
                     Text(
-                        stringResource(R.string.search_for),
+                        stringResource(R.string.translate),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )

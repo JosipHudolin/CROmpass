@@ -33,6 +33,10 @@ import com.example.crompass.utils.loginUser
 import com.example.crompass.utils.registerUser
 import com.example.crompass.utils.sendPasswordReset
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+
 @Composable
 fun AuthScreen(
     navController: NavHostController
@@ -48,6 +52,9 @@ fun AuthScreen(
     var isLoginMode by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
+
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     val fillAllFields = stringResource(R.string.fill_all_fields)
     val ageNumberRequired = stringResource(R.string.age_number_required)
@@ -199,8 +206,17 @@ fun AuthScreen(
                 onValueChange = { password = it },
                 label = { Text(stringResource(R.string.password)) },
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = if (isLoginMode) ImeAction.Done else ImeAction.Next),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        if (passwordVisible) {
+                            Icon(imageVector = Icons.Filled.VisibilityOff, contentDescription = "Hide password")
+                        } else {
+                            Icon(imageVector = Icons.Filled.Visibility, contentDescription = "Show password")
+                        }
+                    }
+                },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -217,8 +233,17 @@ fun AuthScreen(
                     onValueChange = { confirmPassword = it },
                     label = { Text(stringResource(R.string.confirm_password)) },
                     singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    trailingIcon = {
+                        IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                            if (confirmPasswordVisible) {
+                                Icon(imageVector = Icons.Filled.VisibilityOff, contentDescription = "Hide password")
+                            } else {
+                                Icon(imageVector = Icons.Filled.Visibility, contentDescription = "Show password")
+                            }
+                        }
+                    },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline,

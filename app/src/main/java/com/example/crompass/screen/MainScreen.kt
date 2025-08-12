@@ -35,7 +35,7 @@ fun MainScreen(navController: NavHostController) {
             startDestination = "home",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("profile") { ProfileScreen(innerNavController) }
+            composable("profile") { ProfileScreen(navController = innerNavController, globalNavController = navController) }
             composable("home") { HomeScreen(navController = innerNavController) }
             composable("phrases") { PhrasesScreen(innerNavController) }
             composable("culture") { CultureScreen(innerNavController) }

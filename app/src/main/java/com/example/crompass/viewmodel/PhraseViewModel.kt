@@ -53,7 +53,7 @@ class PhraseViewModel : ViewModel() {
             try {
                 val fetchedPhrases = repository.getPhrases()
                 phrases.value = fetchedPhrases
-                filterPhrases() // filtriraj na temelju trenutne kategorije
+                filterPhrases()
                 isLoading.value = false
             } catch (e: Exception) {
                 errorMessage.value = "Error fetching phrases: ${e.message}"
