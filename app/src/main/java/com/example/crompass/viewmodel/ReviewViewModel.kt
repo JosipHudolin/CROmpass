@@ -62,17 +62,6 @@ class ReviewViewModel : ViewModel() {
         }
     }
 
-    fun fetchUserReviews(userId: String) {
-        viewModelScope.launch {
-            try {
-                val result = repository.getUserReviews(userId)
-                _userReviews.value = result
-            } catch (e: Exception) {
-                _errorMessage.value = e.message
-            }
-        }
-    }
-
     fun submitReview(review: Review) {
         viewModelScope.launch {
             try {
@@ -81,10 +70,6 @@ class ReviewViewModel : ViewModel() {
                 _errorMessage.value = e.message
             }
         }
-    }
-
-    fun clearError() {
-        _errorMessage.value = null
     }
 
     fun getPrivateUserReviews(userId: String) {
