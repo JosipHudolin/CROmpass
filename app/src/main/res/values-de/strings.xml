@@ -7,11 +7,11 @@
     <!-- Cultural Rules -->
     <string name="phrases">Redewendungen</string>
     <string name="culture">Kultur</string>
-    <string name="common_phrases">Gebräuchliche Redewendungen</string>
+    <string name="common_phrases">Alltägliche Redewendungen</string>
     <string name="cultural_rules">Kulturelle Regeln</string>
-    <string name="explore_culture">Entdecke Etikette und Verhaltensregeln</string>
+    <string name="explore_culture">Entdecke Kultur und Verhaltensregeln</string>
     <string name="dining_etiquette">Esskultur</string>
-    <string name="meeting_people">Leute kennenlernen</string>
+    <string name="meeting_people">Leute ansprechen</string>
     <string name="greetings_and_formalities">Begrüßungen und Formalitäten</string>
     <!-- Translation and Language -->
     <string name="translate">Übersetzen</string>
@@ -40,7 +40,7 @@
     <string name="emergency_contacts">Notfallkontakte</string>
     <string name="roadside_assistance">Pannenhilfe</string>
     <string name="general_emergency">Notfalldienste</string>
-    <string name="ambulance">Krankenwagen</string>
+    <string name="ambulance">Erste Hilfe</string>
     <string name="fire_department">Feuerwehr</string>
     <string name="police">Polizei</string>
     <string name="navigate_with_google_maps">Mit Google Maps navigieren</string>

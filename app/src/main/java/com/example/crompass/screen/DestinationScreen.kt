@@ -1,8 +1,6 @@
 package com.example.crompass.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -74,7 +72,6 @@ fun DestinationScreen(
 
     val language = LocalAppLocale.current.currentLanguageCode
 
-    var isDropdownExpanded by remember { mutableStateOf(false) }
     var selectedDestination by remember { mutableStateOf<Destination?>(null) }
     var showReviewDialog by remember { mutableStateOf(false) }
     var showReviewList by remember { mutableStateOf(false) }
