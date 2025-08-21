@@ -20,6 +20,8 @@ import androidx.navigation.NavHostController
 import com.example.crompass.model.UserData
 import com.example.crompass.viewmodel.UserViewModel
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import com.example.crompass.R
 import com.example.crompass.screen.components.Dropdown
 import com.example.crompass.utils.LocalAppLocale
@@ -41,14 +43,21 @@ fun ProfileScreen(navController: NavHostController, globalNavController: NavHost
     // Get current locale and translation maps
     val appLocaleLanguage = LocalAppLocale.current.currentLanguageCode
 
+    // --- content descriptions (avoid calling stringResource inside semantics) ---
+    val cdMyProfile = stringResource(R.string.my_profile)
+    val cdBack = stringResource(R.string.back)
+    val cdEditInfo = stringResource(R.string.edit_info)
+    val cdChangePassword = stringResource(R.string.change_password)
+    val cdLogout = stringResource(R.string.logout)
+
     Scaffold(
         topBar = {
             TopAppBar(
                 windowInsets = WindowInsets(0),
-                title = { Text(text = stringResource(R.string.my_profile), color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.titleLarge) },
+                title = { Text(text = cdMyProfile, color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = MaterialTheme.colorScheme.onPrimary)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = cdBack, tint = MaterialTheme.colorScheme.onPrimary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -94,7 +103,11 @@ fun ProfileScreen(navController: NavHostController, globalNavController: NavHost
                             )
                         ).forEach { (label, value) ->
                             Card(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics {
+                                        contentDescription = "$label: $value"
+                                    },
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                                 shape = RoundedCornerShape(12.dp),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -111,7 +124,9 @@ fun ProfileScreen(navController: NavHostController, globalNavController: NavHost
 
                         Button(
                             onClick = { isEditDialogOpen = true },
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .semantics { contentDescription = cdEditInfo }
                         ) {
                             Text(stringResource(R.string.edit_info))
                         }
@@ -129,7 +144,9 @@ fun ProfileScreen(navController: NavHostController, globalNavController: NavHost
 
                         Button(
                             onClick = { isChangePasswordDialogOpen = true },
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .semantics { contentDescription = cdChangePassword }
                         ) {
                             Text(stringResource(R.string.change_password))
                         }
@@ -146,7 +163,9 @@ fun ProfileScreen(navController: NavHostController, globalNavController: NavHost
                             onClick = {
                                 logout(globalNavController)
                             },
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .semantics { contentDescription = cdLogout }
                         ) {
                             Text(stringResource(id = R.string.logout))
                         }
@@ -183,6 +202,15 @@ fun EditProfileDialog(
     // When showing the dropdown, display the localized value for the current gender
     val selectedGenderLocalized = genderToEnglish.entries.find { it.value == gender }?.key ?: genderOptions.first()
 
+    // --- content descriptions (precompute for semantics) ---
+    val cdName = stringResource(R.string.name)
+    val cdLastName = stringResource(R.string.last_name)
+    val cdEmail = stringResource(R.string.email)
+    val cdAge = stringResource(R.string.age)
+    val cdGender = stringResource(R.string.gender)
+    val cdSave = stringResource(R.string.save)
+    val cdCancel = stringResource(R.string.cancel)
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.edit_info)) },
@@ -192,6 +220,7 @@ fun EditProfileDialog(
                     value = firstName,
                     onValueChange = { firstName = it },
                     label = { Text(stringResource(R.string.name)) },
+                    modifier = Modifier.semantics { contentDescription = cdName },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -204,6 +233,7 @@ fun EditProfileDialog(
                     value = lastName,
                     onValueChange = { lastName = it },
                     label = { Text(stringResource(R.string.last_name)) },
+                    modifier = Modifier.semantics { contentDescription = cdLastName },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -216,6 +246,7 @@ fun EditProfileDialog(
                     value = email,
                     onValueChange = { email = it },
                     label = { Text(stringResource(R.string.email)) },
+                    modifier = Modifier.semantics { contentDescription = cdEmail },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -228,6 +259,7 @@ fun EditProfileDialog(
                     value = age,
                     onValueChange = { age = it },
                     label = { Text(stringResource(R.string.age)) },
+                    modifier = Modifier.semantics { contentDescription = cdAge },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -238,35 +270,45 @@ fun EditProfileDialog(
                 )
 
                 // Gender Dropdown
-                Dropdown(
-                    label = stringResource(R.string.gender),
-                    options = genderOptions,
-                    selectedOption = genderOptions.find { it == selectedGenderLocalized } ?: genderOptions.first(),
-                    onOptionSelected = { selected ->
-                        gender = genderToEnglish[selected] ?: genderToEnglish.values.firstOrNull { it == selected } ?: "Other"
-                    }
-                )
+                Box(
+                    modifier = Modifier.semantics { contentDescription = cdGender }
+                ) {
+                    Dropdown(
+                        label = stringResource(R.string.gender),
+                        options = genderOptions,
+                        selectedOption = genderOptions.find { it == selectedGenderLocalized } ?: genderOptions.first(),
+                        onOptionSelected = { selected ->
+                            gender = genderToEnglish[selected] ?: genderToEnglish.values.firstOrNull { it == selected } ?: "Other"
+                        }
+                    )
+                }
                 Spacer(modifier = Modifier.height(8.dp))
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                onSave(
-                    mapOf(
-                        "firstName" to firstName,
-                        "lastName" to lastName,
-                        "email" to email,
-                        "age" to age,
-                        "gender" to (genderToEnglish[gender] ?: gender ?: "Other")
+            TextButton(
+                onClick = {
+                    onSave(
+                        mapOf(
+                            "firstName" to firstName,
+                            "lastName" to lastName,
+                            "email" to email,
+                            "age" to age,
+                            "gender" to (genderToEnglish[gender] ?: gender ?: "Other")
+                        )
                     )
-                )
-                onDismiss()
-            }) {
+                    onDismiss()
+                },
+                modifier = Modifier.semantics { contentDescription = cdSave }
+            ) {
                 Text(stringResource(R.string.save))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.semantics { contentDescription = cdCancel }
+            ) {
                 Text(stringResource(R.string.cancel))
             }
         },
@@ -286,6 +328,13 @@ fun ChangePasswordDialog(
 
     val context = LocalContext.current
 
+    // --- content descriptions (precompute for semantics) ---
+    val cdCurrentPassword = stringResource(R.string.current_password)
+    val cdNewPassword = stringResource(R.string.new_password)
+    val cdConfirmPassword = stringResource(R.string.confirm_password)
+    val cdSave = stringResource(R.string.save)
+    val cdCancel = stringResource(R.string.cancel)
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.change_password)) },
@@ -295,6 +344,7 @@ fun ChangePasswordDialog(
                     value = currentPassword,
                     onValueChange = { currentPassword = it },
                     label = { Text(stringResource(R.string.current_password)) },
+                    modifier = Modifier.semantics { contentDescription = cdCurrentPassword },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -307,6 +357,7 @@ fun ChangePasswordDialog(
                     value = newPassword,
                     onValueChange = { newPassword = it },
                     label = { Text(stringResource(R.string.new_password)) },
+                    modifier = Modifier.semantics { contentDescription = cdNewPassword },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -319,6 +370,7 @@ fun ChangePasswordDialog(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
                     label = { Text(stringResource(R.string.confirm_password)) },
+                    modifier = Modifier.semantics { contentDescription = cdConfirmPassword },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -330,27 +382,33 @@ fun ChangePasswordDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                if (newPassword == confirmPassword) {
-                    changePassword(currentPassword, newPassword) { success, message ->
-                        if (success) {
-                            Toast.makeText(context, context.getString(R.string.password_changed_successfully), Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(context, context.getString(R.string.error_changing_password), Toast.LENGTH_SHORT).show()
+            TextButton(
+                onClick = {
+                    if (newPassword == confirmPassword) {
+                        changePassword(currentPassword, newPassword) { success, message ->
+                            if (success) {
+                                Toast.makeText(context, context.getString(R.string.password_changed_successfully), Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, context.getString(R.string.error_changing_password), Toast.LENGTH_SHORT).show()
+                            }
+                            onPasswordChanged(message ?: "")
                         }
-                        onPasswordChanged(message ?: "")
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.passwords_do_not_match), Toast.LENGTH_SHORT).show()
+                        onPasswordChanged(context.getString(R.string.passwords_do_not_match))
                     }
-                } else {
-                    Toast.makeText(context, context.getString(R.string.passwords_do_not_match), Toast.LENGTH_SHORT).show()
-                    onPasswordChanged(context.getString(R.string.passwords_do_not_match))
-                }
-                onDismiss()
-            }) {
+                    onDismiss()
+                },
+                modifier = Modifier.semantics { contentDescription = cdSave }
+            ) {
                 Text(stringResource(R.string.save))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.semantics { contentDescription = cdCancel }
+            ) {
                 Text(stringResource(R.string.cancel))
             }
         },

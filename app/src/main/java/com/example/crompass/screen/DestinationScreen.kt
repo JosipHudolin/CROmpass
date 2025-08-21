@@ -57,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import com.example.crompass.screen.components.Dropdown
 import com.example.crompass.utils.LocalAppLocale
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -182,6 +183,13 @@ fun DestinationScreen(
                             onClick = {
                                 selectedDestination = destination
                                 false
+                            },
+                            icon = if (selectedDestination?.id == destination.id) {
+                                // Ako je marker selektiran → koristi plavu nijansu
+                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+                            } else {
+                                // Inače koristi crvenu (default)
+                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
                             }
                         )
                     }

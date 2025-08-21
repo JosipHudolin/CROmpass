@@ -11,15 +11,23 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.crompass.R
 
 @Composable
 fun PhraseCard(
     phraseText: String,
     translation: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onSpeakClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -37,11 +45,20 @@ fun PhraseCard(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Spacer(Modifier.height(4.dp))
-            Text(
-                text = "➡️ $translation",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.secondary
-            )
+            Row {
+                Text(
+                    text = "➡️ $translation",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(onClick = onSpeakClick) {
+                    Icon(
+                        imageVector = Icons.Default.VolumeUp,
+                        contentDescription = stringResource(R.string.speak)
+                    )
+                }
+            }
         }
     }
 }

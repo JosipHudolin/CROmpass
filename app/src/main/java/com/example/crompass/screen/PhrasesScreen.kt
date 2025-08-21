@@ -18,7 +18,6 @@ import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.background
 import androidx.compose.runtime.livedata.observeAsState
 import java.util.Locale
-import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.res.stringResource
 import com.example.crompass.R
 import com.example.crompass.model.Phrase
@@ -54,11 +53,6 @@ fun PhrasesScreen(navController: NavHostController) {
                     tts?.speak("Language not supported", TextToSpeech.QUEUE_FLUSH, null, null)
                 }
             }
-        }
-    }
-    DisposableEffect(tts) {
-        onDispose {
-            tts?.shutdown()
         }
     }
 
@@ -154,7 +148,8 @@ fun PhrasesScreen(navController: NavHostController) {
                         PhraseCard(
                             phraseText = phraseText,
                             translation = croatianText,
-                            onClick = { speak(croatianText) }
+                            onClick = { speak(croatianText) },
+                            onSpeakClick = {speak(croatianText)}
                         )
                     }
                 }
